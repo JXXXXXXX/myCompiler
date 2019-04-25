@@ -1,5 +1,7 @@
 package com.company;
 
+import com.sun.org.apache.bcel.internal.generic.FLOAD;
+
 import java.io.*;
 import java.util.*;
 
@@ -151,7 +153,7 @@ public class Parser {
             change = false;
             for (int i=0;i<G.size();i++){
                 // 对每一个文法
-                Grammar g = G.get(i);//<--对它循环
+                Grammar g = G.get(i);
                 is_empty = true;
                 t=0;
                 while (is_empty && t<g.right.size() ){
@@ -189,8 +191,75 @@ public class Parser {
         FIRST.remove("~");
         FIRST.remove("START");
     }
-    public void get_follow(){
+    public HashSet<String> judge_first(Vector<String> strSet){
+        HashSet<String> result = new HashSet<>();
+        int count = 0;
+        String symbol;
+        for(int i=0;i<strSet.size();i++){
+            symbol = strSet.get(i);
+            if(!inVT(symbol)){
+                // 终结符
+                result.add(symbol);
+                break;
+            }
+            // 非终结符
+            if (!FIRST.get(symbol).contains("~")){
+                //symbol的first集里 没有“~”
+                result.addAll(FIRST.get(symbol));
+                break;
+            }
+            result.addAll(FIRST.get(symbol));
+            result.remove("~");
+            count++;
+        }
+        if (count==strSet.size())
+            result.add("~");
 
+        return result;
+    }
+    public void get_follow(){
+        // 初始化FOLLOW
+        for(int i=0;i<V.size();i++){
+            FOLLOW.put(V.get(i),new HashSet<>());
+        }
+
+        boolean change = true;
+        String symbolRight;
+        while (change) {
+            change = false;
+            int nextIndex;
+            for (int i=0;i<G.size();i++){
+                Grammar g = G.get(i);
+                for(int j=0;j<g.right.size();j++){
+                    //对于文法g右侧的每一个文法符号g.right.get(j)
+                    symbolRight = g.right.get(j);
+                    if (!inVT(symbolRight)){
+                        continue;
+                    }
+                    int ori_size = FOLLOW.get(symbolRight).size();
+                    nextIndex = j+1;
+                    if(nextIndex!=g.right.size()){
+                        Vector<String> tmp = new Vector<>();
+                        for(int k=nextIndex;k<g.right.size();k++)
+                            tmp.add(g.right.get(k));
+                        HashSet<String> stmp = judge_first(tmp);
+                        FOLLOW.get(symbolRight).addAll(stmp);
+                        if(stmp.contains("~")){
+                            FOLLOW.get(symbolRight).remove("~");
+                            FOLLOW.get(symbolRight).addAll(FOLLOW.get(g.left));
+                        }
+                        if (ori_size<FOLLOW.get(symbolRight).size())
+                            change = true;
+                    }
+                    else {
+                        FOLLOW.get(symbolRight).addAll(FOLLOW.get(g.left));
+                        if (ori_size<FOLLOW.get(symbolRight).size())
+                            change = true;
+                    }
+                }
+            }
+        }
+        FOLLOW.remove("START");
     }
     public Parser(){
         G = new Vector<Grammar>();  // 文法
