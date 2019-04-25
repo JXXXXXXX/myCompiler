@@ -170,7 +170,7 @@ public class Parser {
                     for(Iterator it=FIRST.get(g.right.get(t)).iterator();it.hasNext();){
                         // 对于g.right.get(t)对应的 FIRST集 中的每个元素
                         String temp = (String) it.next();
-                        if(!FIRST.get(g.left).contains(temp)){
+                        if(!FIRST.get(g.left).contains(temp) && temp!="~"){
                             FIRST.get(g.left).add(temp);
                             change =true;
                         }
