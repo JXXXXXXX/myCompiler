@@ -5,10 +5,27 @@ import java.io.*;
 
 public class Lexer {
     public int syn,index;
-    public Table id;    // 标识符表
-    public Table num;   // 常数表
     public String input_code;   // 输入代码
-    public Token tokens;    // 生成的token序列
+    public Vector<Token> tokens;    // 生成的token序列
+    public String[] keyword={"if","then","else","while","do"},
+                    op={"\'", "+","-","*","/", "!=", ">",">=", "<","<=", "=","==", "(",")",";",};
+    public Vector<String> idTable,numTable;
+
+
+    public static boolean isLetter(char letter){
+        if(letter>='a'&&letter<='z'||letter>='A'&&letter<='Z'||letter=='_')
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isDigit(char digit)
+    {
+        if(digit>='0'&&digit<='9')
+            return true;
+        else
+            return false;
+    }
 
     public void readcode(){
         // 读源程序文件
@@ -61,39 +78,226 @@ public class Lexer {
         input_code=tempString.toString();
     }
 
-    public Token Scanner(){
+    public int searchTable(String table[],String str){
+        for (int i=0;i<table.length;i++){
+            if(table[i].equals(str)){
+                return i+1;
+                // 返回i+1因为，0代表$
+            }
+        }
+        return -1; // 没找到返回-1
+    }
+
+    public int searchTable(Vector<String> table,String str){
+        for (int i=0;i<table.size();i++){
+            if(table.get(i).equals(str)){
+                return i+1;
+                // 返回i+1因为，0代表$
+            }
+        }
+        return -1; // 没找到返回-1
+    }
+
+    public Token Scanner()
+    {
         Token token = new Token();
-        StringBuffer cisu = new StringBuffer();
+        StringBuffer morpheme = new StringBuffer();
 
         while(input_code.charAt(index)==' '){
             // 跳过空白字符
             index++;
         }
+        char ch = input_code.charAt(index);
 
-        // todo:isletter
+        if (isLetter(ch))
+        {
+            morpheme.append(ch);
+            index++;
+            ch = input_code.charAt(index);
 
+            while(isLetter(ch)||isDigit(ch))
+            {   // 继续读入字符和数字
+                morpheme.append(ch);
+                index++;
+                ch = input_code.charAt(index);
+            }
+
+            syn = searchTable(keyword,morpheme.toString());
+
+            if (syn!=-1){
+                // is a keyword
+                token.type=keyword[syn-1];
+                token.value=null;
+                tokens.add(token);
+            }
+            else{
+                // not a keyword
+                syn=searchTable(idTable,morpheme.toString());
+
+                if (syn==-1){
+                    // 不是已有的标识符
+                    idTable.add(morpheme.toString());
+                    syn = idTable.size();
+                }
+
+                token.type="id";
+                token.value=Integer.toString(syn-1);
+                tokens.add(token);
+            }
+        }
+        else if (isDigit(ch))
+        {
+            // 若第一个是数字
+            while(isDigit(ch))
+            {   // 若继续是数字
+                morpheme.append(ch);
+                index++;
+                ch = input_code.charAt(index);
+            }
+
+            syn=searchTable(numTable,morpheme.toString());
+
+            if(syn==-1)
+            {
+                numTable.add(morpheme.toString());
+                syn=numTable.size();
+            }
+
+            token.type="num";
+            token.value=Integer.toString(syn-1);
+            tokens.add(token);
+        }
+        else if (   ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
+                    ch == ';' || ch == '(' || ch == ')' || ch == '\'')
+        {
+            //若为运算符或者界符，查表得到结果
+            morpheme.append(ch);
+
+            for (int i = 0; i<op.length; i++)
+            {
+                //查运算符界符表
+                if (op[i].equals(morpheme))
+                {
+                    syn = i;
+                    break;
+                }
+            }
+
+            token.type="op";
+            token.value=Integer.toString(syn);
+            tokens.add(token);
+
+            index++;//指针下移，为下一扫描做准备
+
+        }
+        else if(ch=='<')
+        {
+            //<,<=
+            index++;
+            ch = input_code.charAt(index);
+
+            if(ch=='='){
+                syn=searchTable(op,"<=");  // '<='
+            }
+            else
+            {
+                index--;
+                syn=searchTable(op,"<");  // '<'
+            }
+
+            token.type="op";
+            token.value=Integer.toString(syn);
+            tokens.add(token);
+
+            index++;
+
+        }
+        else if(ch=='>')
+        {
+            //>,>=,>>
+            index++;
+            ch = input_code.charAt(index);
+
+            if(ch=='='){
+                syn=searchTable(op,">=");  // '>='
+            }
+            else
+            {
+                index--;
+                syn=searchTable(op,">");  // '>'
+            }
+
+            token.type="op";
+            token.value=Integer.toString(syn);
+            tokens.add(token);
+
+            index++;
+
+        }
+        else if(ch=='=')
+        {
+            //=,==
+            index++;
+            ch=input_code.charAt(index);
+
+            if(ch =='='){
+                syn=searchTable(op,"=="); // '=='
+            }
+            else
+            {
+                index--;
+                syn=searchTable(op,"=");  //  '='
+            }
+
+            token.type="op";
+            token.value=Integer.toString(syn);
+            tokens.add(token);
+
+            index++;
+
+        }
+        else if(input_code.charAt(index)=='!' && input_code.charAt(index+1)=='=')
+        {
+            index+=2;
+            syn=searchTable(op,"!=");
+            token.type="op";
+            token.value=Integer.toString(syn);
+            tokens.add(token);
+        }
+        else if(ch=='\0')
+        {
+            syn=0;
+            token.type="$";
+            token.value=null;
+            tokens.add(token);
+        }
+        else
+        {
+
+            System.out.println("error: no exist Lexer:"+input_code.charAt(index));
+            System.exit(0);
+        }
         return token;
     }
 
     public Lexer(){
-        syn=0;
+        syn=-1;
         index=0;
-        id = new Table();
-        num = new Table();
         input_code = new String();
-        tokens = new Token();
+        tokens = new Vector<Token>();
+        idTable = new Vector<String>();
+        numTable = new Vector<String>();
         readcode();
         pre_op();
+        //System.out.println(input_code);
+        while(syn!=0){
+            Scanner();
+        }
     }
 }
 
-class Token extends Vector<Token> {
+class Token {
     String type;
     String value;
-}
-
-class Table{
-    String content[];
-    int size=0;
 }
 
