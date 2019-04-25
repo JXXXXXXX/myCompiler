@@ -134,7 +134,60 @@ public class Parser {
         return false;
     }
     public void get_first(){
+        // 初始化 FIRST
+        for(int i=0;i<V.size();i++){
+            FIRST.put(V.get(i),new HashSet<>());
+        }
+        for (int i=0;i<T.size();i++){
+            FIRST.put(T.get(i),new HashSet<>());
+            FIRST.get(T.get(i)).add(T.get(i)); // 终结符 加入自己
+        }
 
+
+        boolean change = true; // 生成过程中是否发生改动，若改动则需重新遍历
+        boolean is_empty;
+        int t;
+        while (change){// 循环直到没有改动
+            change = false;
+            for (int i=0;i<G.size();i++){
+                // 对每一个文法
+                Grammar g = G.get(i);//<--对它循环
+                is_empty = true;
+                t=0;
+                while (is_empty && t<g.right.size() ){
+                    is_empty = false;
+                    if (!inVT(g.right.get(t))){
+                        // 若右端第t个文法符号是终结符
+                        if(!FIRST.get(g.left).contains(g.right.get(t))){
+                            // 如果g.left对应的 FIRST集 中，不包含g.right.get(t)这个终结符,则加入它
+                            FIRST.get(g.left).add(g.right.get(t));
+                            change =true;
+                        }
+                        continue;
+                    }
+                    for(Iterator it=FIRST.get(g.right.get(t)).iterator();it.hasNext();){
+                        // 对于g.right.get(t)对应的 FIRST集 中的每个元素
+                        String temp = (String) it.next();
+                        if(!FIRST.get(g.left).contains(temp)){
+                            FIRST.get(g.left).add(temp);
+                            change =true;
+                        }
+                    }
+                    if (FIRST.get(g.right.get(t)).contains("~")){
+                        // 若g.right.get(t)对应的 FIRST集 包含 空产生式‘~’
+                        is_empty = true;
+                        t++;
+                    }
+                }
+                if (t == g.right.size() && !FIRST.get(g.left).contains("~")){
+                    FIRST.get(g.left).add("~");
+                    change = true;
+                }
+            }
+        }
+
+        FIRST.remove("~");
+        FIRST.remove("START");
     }
     public void get_follow(){
 
