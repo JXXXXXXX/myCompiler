@@ -27,7 +27,7 @@ public class Lexer {
             return false;
     }
 
-    public void readcode(){
+    public void readfile(){
         // 读源程序文件
         try{
             char temp_char;
@@ -287,7 +287,7 @@ public class Lexer {
         tokens = new Vector<Token>();
         idTable = new Vector<String>();
         numTable = new Vector<String>();
-        readcode();
+        readfile();
         pre_op();
         //System.out.println(input_code);
         while(syn!=0){
