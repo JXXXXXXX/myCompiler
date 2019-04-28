@@ -41,17 +41,33 @@ public class Parser {
             index++;
         }
 
+        Vector<String> symbolset = new Vector<>();
+        String tempsymbol = null;
         String nextSymbol = null;
         for (int i=0;i<V.size();i++){
             // 在非终结符号里找
-            if(str.indexOf(V.get(i),index)==index)
-                nextSymbol = V.get(i);
+            if(str.indexOf(V.get(i),index)==index){
+                tempsymbol = V.get(i);
+                symbolset.add(tempsymbol);
+            }
         }
         for (int i=0;i<T.size();i++){
             // 在终结符号里找
-            if(str.indexOf(T.get(i),index)==index)
-                nextSymbol = T.get(i);
+            if(str.indexOf(T.get(i),index)==index){
+                tempsymbol = T.get(i);
+                symbolset.add(tempsymbol);
+            }
         }
+
+        int maxindex=0;
+        if(symbolset.size()!=0){
+            for(int i=1;i<symbolset.size();i++){
+                if(symbolset.get(i).length()>symbolset.get(maxindex).length())
+                    maxindex=i;
+            }
+        }
+        nextSymbol=symbolset.get(maxindex);
+
         if(str.charAt(index)=='-'&&str.charAt(index+1)=='>')
             nextSymbol="->";
         return nextSymbol;
@@ -222,6 +238,7 @@ public class Parser {
         for(int i=0;i<V.size();i++){
             FOLLOW.put(V.get(i),new HashSet<>());
         }
+        FOLLOW.get("START").add("~");
 
         boolean change = true;
         String symbolRight;
@@ -244,6 +261,7 @@ public class Parser {
                             tmp.add(g.right.get(k));
                         HashSet<String> stmp = judge_first(tmp);
                         FOLLOW.get(symbolRight).addAll(stmp);
+                        //System.out.println(g.left+"--"+symbolRight+"--"+FOLLOW.get(symbolRight));
                         if(stmp.contains("~")){
                             FOLLOW.get(symbolRight).remove("~");
                             FOLLOW.get(symbolRight).addAll(FOLLOW.get(g.left));
@@ -253,6 +271,7 @@ public class Parser {
                     }
                     else {
                         FOLLOW.get(symbolRight).addAll(FOLLOW.get(g.left));
+                        //System.out.println(g.left+"--"+FOLLOW.get(g.left)+"|"+symbolRight+"--"+FOLLOW.get(symbolRight));
                         if (ori_size<FOLLOW.get(symbolRight).size())
                             change = true;
                     }
