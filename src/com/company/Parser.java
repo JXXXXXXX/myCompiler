@@ -1,19 +1,24 @@
 package com.company;
 
-import com.sun.org.apache.bcel.internal.generic.FLOAD;
+import com.sun.deploy.panel.ITreeNode;
 
 import java.io.*;
 import java.util.*;
 
 public class Parser {
+    // -----变量声明部分-----
     private String file_buffer;
+    public HashMap<Integer,Status> statuses;
     public Vector<Grammar> G;
     public Vector<String> V,T;
     public HashMap<String, HashSet<String>> FIRST,FOLLOW;
+    public Atable action;
+    public Gtable goTo;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
     public static String[]  _V={"P","D","S","L","E","C","T","F"},
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
 
+    // -----函数实现部分-----
     public void readfile(String filepath){
         // 读源程序文件
         file_buffer = new String();
@@ -280,6 +285,178 @@ public class Parser {
         }
         FOLLOW.remove("START");
     }
+
+    public void get_closure(Status p){
+        boolean change = true;
+        Status pptmp;
+        while(change){
+            change=false;
+            pptmp=p;
+            for(Iterator it = pptmp.set.iterator();it.hasNext();){
+                Project pro=(Project)it.next();
+                if(pro.dot_position==G.get(pro.pro_num).right.size())
+                    continue;
+                String symbol=G.get(pro.pro_num).right.get(pro.dot_position);
+                if (!inVT(symbol)){
+                    continue;
+                }
+                HashSet<String> new_successor;
+                if(pro.dot_position==G.get(pro.pro_num).right.size())
+                    new_successor=pro.successors;
+                else {
+                    Vector<String> vtmp = new Vector<>();
+                    for(int i=pro.dot_position+1;i<G.get(pro.pro_num).right.size();i++){
+                        vtmp.add(G.get(pro.pro_num).right.get(i));
+                    }
+                    new_successor=judge_first(vtmp);
+                    if (new_successor.contains("~")){
+                        new_successor.addAll(pro.successors);
+                        new_successor.remove("~");
+                    }
+                }
+                Project ptmp = new Project();
+                for(Iterator it2 = indexToV.get(symbol).iterator();it.hasNext();){
+                    int i=(int)it2.next();
+                    ptmp.pro_num=i;
+                    ptmp.dot_position=0;
+                    ptmp.successors=new_successor;
+
+                    Project p_project = null;
+                    boolean ptmp_in_p = false;
+                    for(Iterator it3 = p.set.iterator();it3.hasNext();){
+                        p_project = (Project)it3.next();
+                        if(p_project.pro_num==ptmp.pro_num && p_project.dot_position == ptmp.dot_position){
+                            ptmp_in_p = true;
+                            break;
+                        }
+                    }
+                    if(!ptmp_in_p){
+                        // ptmp不在p中
+                        p.set.add(ptmp);
+                        change=true;
+                    }
+                    else {
+                        int ori_size = p_project.successors.size();
+                        ptmp.successors.addAll(p_project.successors);
+                        p.set.remove(p_project);
+                        p.set.add(ptmp);
+                        if(ori_size<ptmp.successors.size())
+                            change = true;
+                    }
+                }
+            }
+        }
+    }
+
+    boolean judge_repeat(Status s1, Status s2){
+        if(s1.set.size()==s2.set.size()){
+            for(Iterator it1 = s1.set.iterator();it1.hasNext();){
+                Project p1 = (Project)it1.next();
+                if(!s2.set.contains(p1))
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    Object [] judge_conflict(Status s,HashSet<String> result){
+
+        boolean flag = false;
+        HashSet<String> tmp = new HashSet<>();
+        for(Iterator it = s.set.iterator();it.hasNext();){
+            Project pro = (Project)it.next();
+            if(pro.dot_position==G.get(pro.pro_num).right.size()){
+                tmp.addAll(pro.successors);
+            }
+        }
+        for(Iterator it = s.set.iterator();it.hasNext();){
+            Project pro = (Project)it.next();
+            if(pro.dot_position<G.get(pro.pro_num).right.size()){
+                String next = G.get(pro.pro_num).right.get(pro.dot_position);
+                if(tmp.contains(next)){
+                    result.add(next);
+                    flag = true;
+                }
+            }
+        }
+        Object [] obj_return = new Object[3];
+        obj_return[0] = flag;
+        obj_return[1] = s;
+        obj_return[2] = result;
+        return obj_return;
+    }
+
+    public void get_status(){
+        int t=0;
+        Project ptmp = new Project();
+        ptmp.dot_position=0;
+        ptmp.pro_num = 0;
+        ptmp.successors.add("#");
+
+        Status tmp_status = new Status();
+        tmp_status.set.add(ptmp);
+        get_closure(tmp_status);
+
+        statuses.put(t,tmp_status);
+
+        boolean change=true;
+        HashSet<Integer> record = new HashSet<>();
+        HashMap<Integer,Status> sstmp = null;
+        HashSet<String> conflict = null;
+
+        while (change){
+            change = false;
+            sstmp = statuses;
+
+            for(Object sta:sstmp.keySet()){
+                int key = (int)sta;
+                Status value = sstmp.get(key);
+                if (record.contains(key)){
+                    continue;
+                }
+                record.add(key);
+                HashSet<String> record_status = new HashSet<>();
+                for(Iterator it = value.set.iterator();it.hasNext();){
+                    Project pros = (Project) it.next();
+                    if(G.get(pros.pro_num).right.get(0)=="~" || pros.dot_position == G.get(pros.pro_num).right.size()){
+                        for (Iterator it2 = pros.successors.iterator();it2.hasNext();){
+                            String sucess = (String)it2.next();
+                            if (!action.map.get(key).containsKey(sucess)){
+                                String tmp_str = "r"+Integer.toString(pros.pro_num);
+                                action.map.get(key).put(sucess,tmp_str);
+                            }
+                        }
+                        continue;
+                    }
+                    String trans = G.get(pros.pro_num).right.get(pros.dot_position);
+                    if (record_status.contains(trans))
+                        continue;
+                    record_status.add(trans);
+                    tmp_status.set.clear();
+                    ptmp.pro_num = pros.pro_num;
+                    ptmp.dot_position = pros.dot_position+1;
+                    ptmp.successors = pros.successors;
+                    tmp_status.set.add(ptmp);
+
+                    for (Iterator it3 = value.set.iterator();it3.hasNext();){
+                        Project protmp = (Project)it3.next();
+                        if(G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) && !(protmp == pros)){
+                            ptmp.pro_num = protmp.pro_num;
+                            ptmp.dot_position = protmp.dot_position + 1;
+                            ptmp.successors = protmp.successors;
+                            tmp_status.set.add(ptmp);
+                        }
+                    }
+
+                    // TODO
+                }
+            }
+
+        }
+
+    }
+
     public Parser(){
         G = new Vector<Grammar>();  // 文法
         V = new Vector<String>();   // 非终结符
@@ -287,10 +464,14 @@ public class Parser {
         FIRST = new HashMap<>();
         FOLLOW = new HashMap<>();
         indexToV = new HashMap<>();
+        statuses = new HashMap<>();
+        action = new Atable();
+        goTo = new Gtable();
 
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
+        //get_closure();
     }
 }
 
@@ -302,4 +483,22 @@ class Grammar{
         left = null;
         right = new Vector<String>();
     }
+}
+
+class Project{
+    int pro_num;
+    int dot_position;
+    HashSet<String> successors;
+}
+
+class Status{
+    HashSet<Project> set;
+}
+
+class Atable{
+    HashMap<Integer,HashMap<String,String>> map;
+}
+
+class Gtable{
+    HashMap<Integer,HashMap<String,Integer>> map;
 }
