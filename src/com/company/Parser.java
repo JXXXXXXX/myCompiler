@@ -15,7 +15,7 @@ public class Parser {
     public Atable action;
     public Gtable goTo;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
-    public static String[]  _V={"P","D","S","L","E","C","T","F"},
+    public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
 
     // -----函数实现部分-----
@@ -209,7 +209,6 @@ public class Parser {
             }
         }
 
-        FIRST.remove("~");
         FIRST.remove("START");
     }
     public HashSet<String> judge_first(Vector<String> strSet){
@@ -243,7 +242,7 @@ public class Parser {
         for(int i=0;i<V.size();i++){
             FOLLOW.put(V.get(i),new HashSet<>());
         }
-        FOLLOW.get("START").add("~");
+        FOLLOW.get("P").add("~");
 
         boolean change = true;
         String symbolRight;
@@ -286,7 +285,7 @@ public class Parser {
         FOLLOW.remove("START");
     }
 
-    public void get_closure(Status p){
+    public Status get_closure(Status p){
         boolean change = true;
         Status pptmp;
         while(change){
@@ -294,6 +293,7 @@ public class Parser {
             pptmp=p;
             for(Iterator it = pptmp.set.iterator();it.hasNext();){
                 Project pro=(Project)it.next();
+
                 if(pro.dot_position==G.get(pro.pro_num).right.size())
                     continue;
                 String symbol=G.get(pro.pro_num).right.get(pro.dot_position);
@@ -346,6 +346,7 @@ public class Parser {
                 }
             }
         }
+        return p;
     }
 
     boolean judge_repeat(Status s1, Status s2){
@@ -390,13 +391,21 @@ public class Parser {
     public void get_status(){
         int t=0;
         Project ptmp = new Project();
-        ptmp.dot_position=0;
         ptmp.pro_num = 0;
-        ptmp.successors.add("#");
+        ptmp.dot_position=0;
+        ptmp.successors = new HashSet<>();
+        ptmp.successors.add("~");
 
         Status tmp_status = new Status();
+        tmp_status.set = new HashSet<>();
         tmp_status.set.add(ptmp);
-        get_closure(tmp_status);
+        tmp_status=get_closure(tmp_status);
+
+        for(Iterator iterator = tmp_status.set.iterator();iterator.hasNext();){
+            Project p=(Project)iterator.next();
+            System.out.println(p.pro_num+","+p.dot_position);
+        }
+
 
         statuses.put(t,tmp_status);
 
@@ -423,7 +432,7 @@ public class Parser {
                         for (Iterator it2 = pros.successors.iterator();it2.hasNext();){
                             String sucess = (String)it2.next();
                             if (!action.map.get(key).containsKey(sucess)){
-                                String tmp_str = "r"+Integer.toString(pros.pro_num);
+                                String tmp_str = "r"+pros.pro_num;
                                 action.map.get(key).put(sucess,tmp_str);
                             }
                         }
@@ -441,7 +450,7 @@ public class Parser {
 
                     for (Iterator it3 = value.set.iterator();it3.hasNext();){
                         Project protmp = (Project)it3.next();
-                        if(G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) && !(protmp == pros)){
+                        if(protmp.dot_position<G.get(protmp.pro_num).right.size() && G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) && !(protmp == pros)){
                             ptmp.pro_num = protmp.pro_num;
                             ptmp.dot_position = protmp.dot_position + 1;
                             ptmp.successors = protmp.successors;
@@ -449,12 +458,74 @@ public class Parser {
                         }
                     }
 
-                    // TODO
+                    tmp_status = get_closure(tmp_status);
+                    boolean flag = true;
+                    for (Object s:sstmp.keySet()){
+                        int s_first = (int)s;
+                        Status s_second = sstmp.get(s);
+
+                        if(judge_repeat(s_second,tmp_status)){
+                            if (inVT(trans)){
+                                HashMap<String,Integer> tmp_map = new HashMap<>();
+                                tmp_map.put(trans,s_first);
+                                goTo.map.put(key,tmp_map);
+                            }
+                            else {
+                                HashMap<String,String> tmp_map = new HashMap<>();
+                                String tmp_str = "s"+Integer.toString(s_first);
+                                tmp_map.put(trans,tmp_str);
+                                action.map.put(key,tmp_map);
+                            }
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                        continue;
+                    statuses.put(++t,tmp_status);
+                    change = true;
+
+                    if (inVT(trans)){
+                        HashMap<String,Integer> tmp_map = new HashMap<>();
+                        tmp_map.put(trans,t);
+                        goTo.map.put(key,tmp_map);
+                    }
+                    else {
+                        HashMap<String,String> tmp_map = new HashMap<>();
+                        String tmp_str = "s"+t;
+                        tmp_map.put(trans,tmp_str);
+                        action.map.put(key,tmp_map);
+                    }
+
                 }
             }
 
         }
 
+        int tmp_int = goTo.map.get(0).get("P");
+        if (!action.map.containsKey(tmp_int)){
+            HashMap<String,String> tmp_map = new HashMap<>();
+            tmp_map.put("~","acc");
+            action.map.put(tmp_int,tmp_map);
+        }
+    }
+
+    public void print_table(){
+        for (Object f1_first:action.map.keySet()){
+            HashMap<String,String> f1_second = action.map.get(f1_first);
+            for (Object f2_first:f1_second.keySet()){
+                String f2_second = f1_second.get(f2_first);
+                System.out.println(f1_first+" "+f2_first+" "+f2_second);
+            }
+        }
+
+        for (Object f1_first:goTo.map.keySet()){
+            HashMap<String,Integer> f1_second = goTo.map.get(f1_first);
+            for (Object f2_first:f1_second.keySet()){
+                int f2_second = f1_second.get(f2_first);
+                System.out.println(f1_first+" "+f2_first+" "+f2_second);
+            }
+        }
     }
 
     public Parser(){
@@ -466,12 +537,15 @@ public class Parser {
         indexToV = new HashMap<>();
         statuses = new HashMap<>();
         action = new Atable();
+        action.map = new HashMap<>();
         goTo = new Gtable();
+        goTo.map = new HashMap<>();
 
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
-        //get_closure();
+        get_status();
+        print_table();
     }
 }
 
