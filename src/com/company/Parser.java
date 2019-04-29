@@ -17,6 +17,10 @@ public class Parser {
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
     public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
+    public static String[]  _V2={"START","P","T","F"},
+                            _T2={"id","+","*","(",")"};
+
+
 
     // -----函数实现部分-----
     public void readfile(String filepath){
@@ -70,8 +74,9 @@ public class Parser {
                 if(symbolset.get(i).length()>symbolset.get(maxindex).length())
                     maxindex=i;
             }
+            nextSymbol=symbolset.get(maxindex);
         }
-        nextSymbol=symbolset.get(maxindex);
+
 
         if(str.charAt(index)=='-'&&str.charAt(index+1)=='>')
             nextSymbol="->";
@@ -80,15 +85,15 @@ public class Parser {
 
     public void get_garmmer(){
         // 1. 生成 V,T向量
-        for(int i=0;i<_V.length;i++){
-            V.add(_V[i]);
+        for(int i=0;i<_V2.length;i++){
+            V.add(_V2[i]);
         }
-        for(int i=0;i<_T.length;i++){
-            T.add(_T[i]);
+        for(int i=0;i<_T2.length;i++){
+            T.add(_T2[i]);
         }
 
         // 2. 读文件
-        String filepath = "E://Grammar.txt";
+        String filepath = "E://Grammar2.txt";
         readfile(filepath);
         // 3.增广文法
         Grammar g0 = new Grammar();
@@ -142,7 +147,7 @@ public class Parser {
                 indexToV.get(left).add(i);  // 添加索引
             }
             else {
-                indexToV.put(left,new HashSet<Integer>());// 创建关于该非终结符的map键
+                indexToV.put(left,new HashSet<>());// 创建关于该非终结符的map键
                 indexToV.get(left).add(i);// 添加索引
             }
         }
@@ -237,12 +242,13 @@ public class Parser {
 
         return result;
     }
+
     public void get_follow(){
         // 初始化FOLLOW
         for(int i=0;i<V.size();i++){
             FOLLOW.put(V.get(i),new HashSet<>());
         }
-        FOLLOW.get("P").add("~");
+        FOLLOW.get("P").add("#");
 
         boolean change = true;
         String symbolRight;
@@ -287,27 +293,35 @@ public class Parser {
 
     public Status get_closure(Status p){
         boolean change = true;
-        Status pptmp;
+        Status pptmp = new Status();
         while(change){
             change=false;
-            pptmp=p;
+            pptmp.set=(HashSet<Project>) p.set.clone();
+            // System.out.println(pptmp.set.size());
             for(Iterator it = pptmp.set.iterator();it.hasNext();){
-                Project pro=(Project)it.next();
+                Project pro= (Project)it.next();
 
-                if(pro.dot_position==G.get(pro.pro_num).right.size())
+                if(pro.dot_position==G.get(pro.pro_num).right.size()) //若产生式的点在'->'右侧串的最后，则跳过
                     continue;
-                String symbol=G.get(pro.pro_num).right.get(pro.dot_position);
-                if (!inVT(symbol)){
+                String symbol=G.get(pro.pro_num).right.get(pro.dot_position);//获得下一个文法符号
+                if (!inVT(symbol)){//若是终结符号，跳过
                     continue;
                 }
                 HashSet<String> new_successor;
-                if(pro.dot_position==G.get(pro.pro_num).right.size())
+
+                // 求新项目的后继符号集
+                if(pro.dot_position==(G.get(pro.pro_num).right.size()-1))//若产生式的点在'->'右侧串的最后-1的位置
+                {
+                    // TODO 永远执行这一条不进入else
                     new_successor=pro.successors;
+                }
                 else {
+                    // vector<std::string> vtmp(G[pro.pro_num].right.begin()+pro.dot_position+1,G[pro.pro_num].right.end());
                     Vector<String> vtmp = new Vector<>();
                     for(int i=pro.dot_position+1;i<G.get(pro.pro_num).right.size();i++){
                         vtmp.add(G.get(pro.pro_num).right.get(i));
                     }
+
                     new_successor=judge_first(vtmp);
                     if (new_successor.contains("~")){
                         new_successor.addAll(pro.successors);
@@ -315,14 +329,17 @@ public class Parser {
                     }
                 }
                 Project ptmp = new Project();
-                for(Iterator it2 = indexToV.get(symbol).iterator();it.hasNext();){
+                for(Iterator it2 = indexToV.get(symbol).iterator();it2.hasNext();){
                     int i=(int)it2.next();
+                    System.out.println(symbol+":"+i);
                     ptmp.pro_num=i;
                     ptmp.dot_position=0;
                     ptmp.successors=new_successor;
 
                     Project p_project = null;
                     boolean ptmp_in_p = false;
+
+                    // TODO 这部分应该有问题
                     for(Iterator it3 = p.set.iterator();it3.hasNext();){
                         p_project = (Project)it3.next();
                         if(p_project.pro_num==ptmp.pro_num && p_project.dot_position == ptmp.dot_position){
@@ -394,7 +411,7 @@ public class Parser {
         ptmp.pro_num = 0;
         ptmp.dot_position=0;
         ptmp.successors = new HashSet<>();
-        ptmp.successors.add("~");
+        ptmp.successors.add("#");
 
         Status tmp_status = new Status();
         tmp_status.set = new HashSet<>();
@@ -418,22 +435,26 @@ public class Parser {
             change = false;
             sstmp = statuses;
 
+            System.out.println(change);
+
             for(Object sta:sstmp.keySet()){
-                int key = (int)sta;
-                Status value = sstmp.get(key);
-                if (record.contains(key)){
+                int sta_first = (int)sta;
+                Status sta_second = sstmp.get(sta_first);
+                if (record.contains(sta_first)){
                     continue;
                 }
-                record.add(key);
+                record.add(sta_first);
                 HashSet<String> record_status = new HashSet<>();
-                for(Iterator it = value.set.iterator();it.hasNext();){
+                for(Iterator it = sta_second.set.iterator();it.hasNext();){
                     Project pros = (Project) it.next();
+
                     if(G.get(pros.pro_num).right.get(0)=="~" || pros.dot_position == G.get(pros.pro_num).right.size()){
                         for (Iterator it2 = pros.successors.iterator();it2.hasNext();){
                             String sucess = (String)it2.next();
-                            if (!action.map.get(key).containsKey(sucess)){
+
+                            if (!action.map.get(sta_first).containsKey(sucess)){
                                 String tmp_str = "r"+pros.pro_num;
-                                action.map.get(key).put(sucess,tmp_str);
+                                action.map.get(sta_first).put(sucess,tmp_str);
                             }
                         }
                         continue;
@@ -448,9 +469,13 @@ public class Parser {
                     ptmp.successors = pros.successors;
                     tmp_status.set.add(ptmp);
 
-                    for (Iterator it3 = value.set.iterator();it3.hasNext();){
+                    for (Iterator it3 = sta_second.set.iterator();it3.hasNext();){
                         Project protmp = (Project)it3.next();
-                        if(protmp.dot_position<G.get(protmp.pro_num).right.size() && G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) && !(protmp == pros)){
+
+                        if(protmp.dot_position<G.get(protmp.pro_num).right.size() &&
+                                G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) &&
+                                !(protmp == pros))
+                        {
                             ptmp.pro_num = protmp.pro_num;
                             ptmp.dot_position = protmp.dot_position + 1;
                             ptmp.successors = protmp.successors;
@@ -459,6 +484,12 @@ public class Parser {
                     }
 
                     tmp_status = get_closure(tmp_status);
+
+                    for(Iterator iterator = tmp_status.set.iterator();iterator.hasNext();){
+                        Project p=(Project)iterator.next();
+                        System.out.println(p.pro_num+","+p.dot_position);
+                    }
+
                     boolean flag = true;
                     for (Object s:sstmp.keySet()){
                         int s_first = (int)s;
@@ -468,13 +499,13 @@ public class Parser {
                             if (inVT(trans)){
                                 HashMap<String,Integer> tmp_map = new HashMap<>();
                                 tmp_map.put(trans,s_first);
-                                goTo.map.put(key,tmp_map);
+                                goTo.map.put(sta_first,tmp_map);
                             }
                             else {
                                 HashMap<String,String> tmp_map = new HashMap<>();
-                                String tmp_str = "s"+Integer.toString(s_first);
+                                String tmp_str = "s"+s_first;
                                 tmp_map.put(trans,tmp_str);
-                                action.map.put(key,tmp_map);
+                                action.map.put(sta_first,tmp_map);
                             }
                             flag = false;
                             break;
@@ -488,13 +519,13 @@ public class Parser {
                     if (inVT(trans)){
                         HashMap<String,Integer> tmp_map = new HashMap<>();
                         tmp_map.put(trans,t);
-                        goTo.map.put(key,tmp_map);
+                        goTo.map.put(sta_first,tmp_map);
                     }
                     else {
                         HashMap<String,String> tmp_map = new HashMap<>();
                         String tmp_str = "s"+t;
                         tmp_map.put(trans,tmp_str);
-                        action.map.put(key,tmp_map);
+                        action.map.put(sta_first,tmp_map);
                     }
 
                 }
@@ -505,7 +536,7 @@ public class Parser {
         int tmp_int = goTo.map.get(0).get("P");
         if (!action.map.containsKey(tmp_int)){
             HashMap<String,String> tmp_map = new HashMap<>();
-            tmp_map.put("~","acc");
+            tmp_map.put("#","acc");
             action.map.put(tmp_int,tmp_map);
         }
     }
@@ -545,7 +576,7 @@ public class Parser {
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         get_status();
-        print_table();
+        //print_table();
     }
 }
 
