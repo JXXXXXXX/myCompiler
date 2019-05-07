@@ -1,7 +1,5 @@
 package com.company;
 
-import com.sun.deploy.panel.ITreeNode;
-
 import java.io.*;
 import java.util.*;
 
@@ -331,7 +329,6 @@ public class Parser {
                 Project ptmp = new Project();
                 for(Iterator it2 = indexToV.get(symbol).iterator();it2.hasNext();){
                     int i=(int)it2.next();
-                    System.out.println(symbol+":"+i);
                     ptmp.pro_num=i;
                     ptmp.dot_position=0;
                     ptmp.successors=new_successor;
@@ -420,7 +417,7 @@ public class Parser {
 
         for(Iterator iterator = tmp_status.set.iterator();iterator.hasNext();){
             Project p=(Project)iterator.next();
-            System.out.println(p.pro_num+","+p.dot_position);
+            /*System.out.println(p.pro_num+","+p.dot_position);*/
         }
 
 
@@ -434,8 +431,6 @@ public class Parser {
         while (change){
             change = false;
             sstmp = statuses;
-
-            System.out.println(change);
 
             for(Object sta:sstmp.keySet()){
                 int sta_first = (int)sta;
@@ -575,7 +570,7 @@ public class Parser {
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
-        get_status();
+        //get_status();
         //print_table();
     }
 }
