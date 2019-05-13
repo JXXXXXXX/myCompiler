@@ -17,7 +17,7 @@ public class Parser {
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
     public static String[]  _V2={"START","P","T","F"},
                             _T2={"id","+","*","(",")"};
-
+    public Vector<Status> statusVector; // LR(0)项集族
 
 
     // -----函数实现部分-----
@@ -554,7 +554,101 @@ public class Parser {
         }
     }
 
+    public Status CLOSURE(Status I){
+        Status J = new Status();
+        J.set=(HashSet<Project>) I.set.clone();
+        Boolean change = true;
+        while (change){
+            change = false;
+            for (Iterator it = J.set.iterator();it.hasNext();){
+                // 访问项集J中的每个产生式
+                Project project = (Project)it.next();
+                String next_Symbol = G.get(project.pro_num).right.get(project.dot_position);
+                if (!inVT(next_Symbol)){
+                    // 下个文法符号不是非终结符
+                    continue;
+                }
+                else {
+                    for (Iterator it2 = indexToV.get(next_Symbol).iterator();it2.hasNext();){
+                        int g_num = (int)it2.next();
+                        Project new_project = new Project();
+                        new_project.pro_num = g_num;
+                        new_project.dot_position = 0;
+                        new_project.successors = null;
+                        if (!J.set.contains(new_project)){
+                            // 若新产生式不在J中，则加入
+                            J.set.add(new_project);
+                            change = true;
+                        }
+                    }
+                }
+            }
+        }
+        return J;
+    }
+
+    public boolean in_statusVector(Status s){
+        boolean flag = false;
+        for (int i=0;i<statusVector.size();i++){
+            if (s.set.size()==statusVector.get(i).set.size()){
+                if (s.set.equals(statusVector.get(i).set)){
+                    // 若项集s和项集族中第i个项集相同
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
+    public Status GOTO(Status I,String Symbol){
+        Status prj_in_I = new Status();
+        prj_in_I.set = new HashSet<>();
+        for (Iterator it = I.set.iterator();it.hasNext();){
+            Project tmp_prj = (Project) it.next();
+            String next_symbol = G.get(tmp_prj.pro_num).right.get(tmp_prj.dot_position);
+            if (next_symbol.equals(Symbol)){
+                prj_in_I.set.add(tmp_prj);
+            }
+        }
+        Status new_item = CLOSURE(prj_in_I);
+        return new_item;
+    }
+
+    public void items(){
+        // 生成LR(0)项集族函数
+        statusVector = new Vector<>();
+
+        Project prj_init = new Project();
+        Status status_init = new Status();
+        status_init.set = new HashSet<>();
+        prj_init.pro_num = 0;// 对应G中的增广文法产生式
+        prj_init.dot_position=0;
+        prj_init.successors = null;
+        status_init.set.add(prj_init);
+        statusVector.add(status_init);
+        boolean change = true;
+        while (change){
+            change = false;
+            for (int i=0;i<statusVector.size();i++){
+                // 对于项集族中的每一个产生式I
+                Status I = statusVector.get(i);
+                for (int j=0;j<_V2.length;j++){
+                    // 对文法符号中的每一个变量X
+                    String X = _V2[j];
+                    Status new_status = GOTO(I,X);
+                    if (new_status.set.size()!=0 && in_statusVector(new_status)==false){
+                        // 若GOTO(I,X)不为空，且不在项集族中,则加入项集族
+                        statusVector.add(new_status);
+                        change = true;
+                    }
+                }
+            }
+        }
+    }
+
     public Parser(){
+        // 变量初始化
         G = new Vector<Grammar>();  // 文法
         V = new Vector<String>();   // 非终结符
         T = new Vector<String>();   // 终结符
@@ -566,6 +660,7 @@ public class Parser {
         action.map = new HashMap<>();
         goTo = new Gtable();
         goTo.map = new HashMap<>();
+
 
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
@@ -586,12 +681,14 @@ class Grammar{
 }
 
 class Project{
+    // LR(0) item
     int pro_num;
     int dot_position;
     HashSet<String> successors;
 }
 
 class Status{
+    // set of LR(0) item
     HashSet<Project> set;
 }
 

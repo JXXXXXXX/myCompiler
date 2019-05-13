@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="修改get_grammar，解决P中出现'~'的问题">
+    <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Parser.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -18,8 +17,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
+            <state relative-caret-position="171">
+              <caret line="10" column="2" selection-start-line="10" selection-end-line="18" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -27,29 +26,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="273" column="26" selection-start-line="273" selection-start-column="26" selection-end-line="273" selection-end-column="26" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Vector.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="750" selection-start-line="750" selection-end-line="750" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6840">
-              <caret line="286" column="23" selection-start-line="286" selection-start-column="23" selection-end-line="286" selection-end-column="23" />
+            <state relative-caret-position="155">
+              <caret line="631" column="27" selection-start-line="631" selection-start-column="27" selection-end-line="631" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -74,6 +52,13 @@
       <find>Garmmar</find>
       <find>HashSet</find>
       <find>Set</find>
+      <find>Status</find>
+      <find>goTo</find>
+      <find>action</find>
+      <find>get_closure</find>
+      <find>judge_conflict</find>
+      <find>statuses</find>
+      <find>P</find>
     </findStrings>
     <replaceStrings>
       <replace>token</replace>
@@ -103,47 +88,22 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="925" />
-    <option name="y" value="17" />
-    <option name="width" value="980" />
-    <option name="height" value="1040" />
+    <option name="x" value="107" />
+    <option name="y" value="57" />
+    <option name="width" value="1600" />
+    <option name="height" value="710" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="company" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556184373945" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556545598699" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
@@ -198,7 +158,14 @@
       <workItem from="1556154556912" duration="27317000" />
       <workItem from="1556186692752" duration="1107000" />
       <workItem from="1556351733208" duration="515000" />
-      <workItem from="1556459554592" duration="5156000" />
+      <workItem from="1556459554592" duration="5312000" />
+      <workItem from="1556498935497" duration="9876000" />
+      <workItem from="1556536519697" duration="5845000" />
+      <workItem from="1556543662651" duration="1925000" />
+      <workItem from="1556546510173" duration="6092000" />
+      <workItem from="1557211190651" duration="807000" />
+      <workItem from="1557646117179" duration="20000" />
+      <workItem from="1557756624716" duration="3492000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -263,17 +230,61 @@
       <option name="project" value="LOCAL" />
       <updated>1556184356215</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="getNextSymbol，解决'=='无法识别的问题。完成FOLLOW的求解。">
+      <created>1556464883207</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1556464883208</updated>
+    </task>
+    <task id="LOCAL-00011" summary="正在写get_status">
+      <created>1556524143667</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1556524143667</updated>
+    </task>
+    <task id="LOCAL-00012" summary="可能是get_closure函数有问题，导致结果只有0">
+      <created>1556542396015</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1556542396015</updated>
+    </task>
+    <task id="LOCAL-00013" summary="get_closure函数有问题">
+      <created>1556552629734</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1556552629734</updated>
+    </task>
+    <task id="LOCAL-00014" summary="文法G是增广文法">
+      <created>1557211995881</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1557211995881</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="40793000" />
+    <option name="totallyTimeSpent" value="69006000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.37465563" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.14410187" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -282,11 +293,11 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.407932" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.51983005" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39943343" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3286119" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
@@ -356,13 +367,25 @@
     <MESSAGE value="完成FIRST集" />
     <MESSAGE value="完成FIRST和FOLLOW的结构，但是FIRST产生式有问题。FIRST.P中含有'~'" />
     <MESSAGE value="修改get_grammar，解决P中出现'~'的问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改get_grammar，解决P中出现'~'的问题" />
+    <MESSAGE value="getNextSymbol，解决'=='无法识别的问题。完成FOLLOW的求解。" />
+    <MESSAGE value="正在写get_status" />
+    <MESSAGE value="可能是get_closure函数有问题，导致结果只有0" />
+    <MESSAGE value="get_closure函数有问题" />
+    <MESSAGE value="文法G是增广文法" />
+    <option name="LAST_COMMIT_MESSAGE" value="文法G是增广文法" />
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/AbstractCollection.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="173">
           <caret line="342" selection-start-line="342" selection-end-line="342" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Vector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="750" selection-start-line="750" selection-end-line="750" />
         </state>
       </provider>
     </entry>
@@ -376,24 +399,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/HashMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
+        <state relative-caret-position="142">
+          <caret line="1441" selection-start-line="1441" selection-end-line="1441" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Vector.java">
+    <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="750" selection-start-line="750" selection-end-line="750" />
+        <state relative-caret-position="171">
+          <caret line="10" column="2" selection-start-line="10" selection-end-line="18" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="273" column="26" selection-start-line="273" selection-start-column="26" selection-end-line="273" selection-end-column="26" />
+        <state relative-caret-position="155">
+          <caret line="631" column="27" selection-start-line="631" selection-start-column="27" selection-end-line="631" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
