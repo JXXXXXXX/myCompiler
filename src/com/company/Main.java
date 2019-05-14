@@ -8,6 +8,7 @@ public class Main {
 	// write your code here
         //Lexer lexer = new Lexer();
         Parser parser = new Parser();
+
 /*        System.out.println("------G(是增广文法)---------");
         for(int i=0;i<parser.G.size();i++){
             System.out.print(i+":"+parser.G.get(i).left);
@@ -17,6 +18,7 @@ public class Main {
             }
             System.out.println();
         }*/
+
 /*        System.out.println("-------first---------");
         for (Object key:parser.FIRST.keySet()){
             System.out.println(key+":"+parser.FIRST.get(key));

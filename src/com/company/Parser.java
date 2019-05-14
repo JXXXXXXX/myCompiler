@@ -1,5 +1,7 @@
 package com.company;
 
+import sun.dc.pr.PRError;
+
 import java.io.*;
 import java.util.*;
 
@@ -16,7 +18,8 @@ public class Parser {
     public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
     public static String[]  _V2={"START","P","T","F"},
-                            _T2={"id","+","*","(",")"};
+                            _T2={"id","+","*","(",")"},
+                            _VT2={"START","P","T","F","id","+","*","(",")"};
     public Vector<Status> statusVector; // LR(0)项集族
 
 
@@ -289,310 +292,68 @@ public class Parser {
         FOLLOW.remove("START");
     }
 
-    public Status get_closure(Status p){
-        boolean change = true;
-        Status pptmp = new Status();
-        while(change){
-            change=false;
-            pptmp.set=(HashSet<Project>) p.set.clone();
-            // System.out.println(pptmp.set.size());
-            for(Iterator it = pptmp.set.iterator();it.hasNext();){
-                Project pro= (Project)it.next();
-
-                if(pro.dot_position==G.get(pro.pro_num).right.size()) //若产生式的点在'->'右侧串的最后，则跳过
-                    continue;
-                String symbol=G.get(pro.pro_num).right.get(pro.dot_position);//获得下一个文法符号
-                if (!inVT(symbol)){//若是终结符号，跳过
-                    continue;
-                }
-                HashSet<String> new_successor;
-
-                // 求新项目的后继符号集
-                if(pro.dot_position==(G.get(pro.pro_num).right.size()-1))//若产生式的点在'->'右侧串的最后-1的位置
-                {
-                    // TODO 永远执行这一条不进入else
-                    new_successor=pro.successors;
-                }
-                else {
-                    // vector<std::string> vtmp(G[pro.pro_num].right.begin()+pro.dot_position+1,G[pro.pro_num].right.end());
-                    Vector<String> vtmp = new Vector<>();
-                    for(int i=pro.dot_position+1;i<G.get(pro.pro_num).right.size();i++){
-                        vtmp.add(G.get(pro.pro_num).right.get(i));
-                    }
-
-                    new_successor=judge_first(vtmp);
-                    if (new_successor.contains("~")){
-                        new_successor.addAll(pro.successors);
-                        new_successor.remove("~");
-                    }
-                }
-                Project ptmp = new Project();
-                for(Iterator it2 = indexToV.get(symbol).iterator();it2.hasNext();){
-                    int i=(int)it2.next();
-                    ptmp.pro_num=i;
-                    ptmp.dot_position=0;
-                    ptmp.successors=new_successor;
-
-                    Project p_project = null;
-                    boolean ptmp_in_p = false;
-
-                    // TODO 这部分应该有问题
-                    for(Iterator it3 = p.set.iterator();it3.hasNext();){
-                        p_project = (Project)it3.next();
-                        if(p_project.pro_num==ptmp.pro_num && p_project.dot_position == ptmp.dot_position){
-                            ptmp_in_p = true;
-                            break;
-                        }
-                    }
-                    if(!ptmp_in_p){
-                        // ptmp不在p中
-                        p.set.add(ptmp);
-                        change=true;
-                    }
-                    else {
-                        int ori_size = p_project.successors.size();
-                        ptmp.successors.addAll(p_project.successors);
-                        p.set.remove(p_project);
-                        p.set.add(ptmp);
-                        if(ori_size<ptmp.successors.size())
-                            change = true;
-                    }
-                }
-            }
-        }
-        return p;
-    }
-
-    boolean judge_repeat(Status s1, Status s2){
-        if(s1.set.size()==s2.set.size()){
-            for(Iterator it1 = s1.set.iterator();it1.hasNext();){
-                Project p1 = (Project)it1.next();
-                if(!s2.set.contains(p1))
-                    return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    Object [] judge_conflict(Status s,HashSet<String> result){
-
+    public boolean if_in_Set(Status s,Project p){
         boolean flag = false;
-        HashSet<String> tmp = new HashSet<>();
-        for(Iterator it = s.set.iterator();it.hasNext();){
-            Project pro = (Project)it.next();
-            if(pro.dot_position==G.get(pro.pro_num).right.size()){
-                tmp.addAll(pro.successors);
+        for (Iterator it = s.set.iterator();it.hasNext();){
+            Project p_set = (Project)it.next();
+            if (p.pro_num==p_set.pro_num && p.dot_position == p_set.dot_position){
+                flag = true;
             }
         }
-        for(Iterator it = s.set.iterator();it.hasNext();){
-            Project pro = (Project)it.next();
-            if(pro.dot_position<G.get(pro.pro_num).right.size()){
-                String next = G.get(pro.pro_num).right.get(pro.dot_position);
-                if(tmp.contains(next)){
-                    result.add(next);
-                    flag = true;
-                }
-            }
-        }
-        Object [] obj_return = new Object[3];
-        obj_return[0] = flag;
-        obj_return[1] = s;
-        obj_return[2] = result;
-        return obj_return;
-    }
-
-    public void get_status(){
-        int t=0;
-        Project ptmp = new Project();
-        ptmp.pro_num = 0;
-        ptmp.dot_position=0;
-        ptmp.successors = new HashSet<>();
-        ptmp.successors.add("#");
-
-        Status tmp_status = new Status();
-        tmp_status.set = new HashSet<>();
-        tmp_status.set.add(ptmp);
-        tmp_status=get_closure(tmp_status);
-
-        for(Iterator iterator = tmp_status.set.iterator();iterator.hasNext();){
-            Project p=(Project)iterator.next();
-            /*System.out.println(p.pro_num+","+p.dot_position);*/
-        }
-
-
-        statuses.put(t,tmp_status);
-
-        boolean change=true;
-        HashSet<Integer> record = new HashSet<>();
-        HashMap<Integer,Status> sstmp = null;
-        HashSet<String> conflict = null;
-
-        while (change){
-            change = false;
-            sstmp = statuses;
-
-            for(Object sta:sstmp.keySet()){
-                int sta_first = (int)sta;
-                Status sta_second = sstmp.get(sta_first);
-                if (record.contains(sta_first)){
-                    continue;
-                }
-                record.add(sta_first);
-                HashSet<String> record_status = new HashSet<>();
-                for(Iterator it = sta_second.set.iterator();it.hasNext();){
-                    Project pros = (Project) it.next();
-
-                    if(G.get(pros.pro_num).right.get(0)=="~" || pros.dot_position == G.get(pros.pro_num).right.size()){
-                        for (Iterator it2 = pros.successors.iterator();it2.hasNext();){
-                            String sucess = (String)it2.next();
-
-                            if (!action.map.get(sta_first).containsKey(sucess)){
-                                String tmp_str = "r"+pros.pro_num;
-                                action.map.get(sta_first).put(sucess,tmp_str);
-                            }
-                        }
-                        continue;
-                    }
-                    String trans = G.get(pros.pro_num).right.get(pros.dot_position);
-                    if (record_status.contains(trans))
-                        continue;
-                    record_status.add(trans);
-                    tmp_status.set.clear();
-                    ptmp.pro_num = pros.pro_num;
-                    ptmp.dot_position = pros.dot_position+1;
-                    ptmp.successors = pros.successors;
-                    tmp_status.set.add(ptmp);
-
-                    for (Iterator it3 = sta_second.set.iterator();it3.hasNext();){
-                        Project protmp = (Project)it3.next();
-
-                        if(protmp.dot_position<G.get(protmp.pro_num).right.size() &&
-                                G.get(protmp.pro_num).right.get(protmp.dot_position).equals(trans) &&
-                                !(protmp == pros))
-                        {
-                            ptmp.pro_num = protmp.pro_num;
-                            ptmp.dot_position = protmp.dot_position + 1;
-                            ptmp.successors = protmp.successors;
-                            tmp_status.set.add(ptmp);
-                        }
-                    }
-
-                    tmp_status = get_closure(tmp_status);
-
-                    for(Iterator iterator = tmp_status.set.iterator();iterator.hasNext();){
-                        Project p=(Project)iterator.next();
-                        System.out.println(p.pro_num+","+p.dot_position);
-                    }
-
-                    boolean flag = true;
-                    for (Object s:sstmp.keySet()){
-                        int s_first = (int)s;
-                        Status s_second = sstmp.get(s);
-
-                        if(judge_repeat(s_second,tmp_status)){
-                            if (inVT(trans)){
-                                HashMap<String,Integer> tmp_map = new HashMap<>();
-                                tmp_map.put(trans,s_first);
-                                goTo.map.put(sta_first,tmp_map);
-                            }
-                            else {
-                                HashMap<String,String> tmp_map = new HashMap<>();
-                                String tmp_str = "s"+s_first;
-                                tmp_map.put(trans,tmp_str);
-                                action.map.put(sta_first,tmp_map);
-                            }
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if (!flag)
-                        continue;
-                    statuses.put(++t,tmp_status);
-                    change = true;
-
-                    if (inVT(trans)){
-                        HashMap<String,Integer> tmp_map = new HashMap<>();
-                        tmp_map.put(trans,t);
-                        goTo.map.put(sta_first,tmp_map);
-                    }
-                    else {
-                        HashMap<String,String> tmp_map = new HashMap<>();
-                        String tmp_str = "s"+t;
-                        tmp_map.put(trans,tmp_str);
-                        action.map.put(sta_first,tmp_map);
-                    }
-
-                }
-            }
-
-        }
-
-        int tmp_int = goTo.map.get(0).get("P");
-        if (!action.map.containsKey(tmp_int)){
-            HashMap<String,String> tmp_map = new HashMap<>();
-            tmp_map.put("#","acc");
-            action.map.put(tmp_int,tmp_map);
-        }
-    }
-
-    public void print_table(){
-        for (Object f1_first:action.map.keySet()){
-            HashMap<String,String> f1_second = action.map.get(f1_first);
-            for (Object f2_first:f1_second.keySet()){
-                String f2_second = f1_second.get(f2_first);
-                System.out.println(f1_first+" "+f2_first+" "+f2_second);
-            }
-        }
-
-        for (Object f1_first:goTo.map.keySet()){
-            HashMap<String,Integer> f1_second = goTo.map.get(f1_first);
-            for (Object f2_first:f1_second.keySet()){
-                int f2_second = f1_second.get(f2_first);
-                System.out.println(f1_first+" "+f2_first+" "+f2_second);
-            }
-        }
+        return flag;
     }
 
     public Status CLOSURE(Status I){
         Status J = new Status();
-        J.set=(HashSet<Project>) I.set.clone();
+        Status J2 = new Status();
+        J2.set=(HashSet<Project>) I.set.clone();
         Boolean change = true;
         while (change){
             change = false;
+            J.set = (HashSet<Project>) J2.set.clone();// 解决在迭代的同时不能修改的问题，将迭代对象J复制一份到J2
+
             for (Iterator it = J.set.iterator();it.hasNext();){
                 // 访问项集J中的每个产生式
                 Project project = (Project)it.next();
-                String next_Symbol = G.get(project.pro_num).right.get(project.dot_position);
-                if (!inVT(next_Symbol)){
-                    // 下个文法符号不是非终结符
-                    continue;
-                }
-                else {
-                    for (Iterator it2 = indexToV.get(next_Symbol).iterator();it2.hasNext();){
-                        int g_num = (int)it2.next();
-                        Project new_project = new Project();
-                        new_project.pro_num = g_num;
-                        new_project.dot_position = 0;
-                        new_project.successors = null;
-                        if (!J.set.contains(new_project)){
-                            // 若新产生式不在J中，则加入
-                            J.set.add(new_project);
-                            change = true;
-                        }
+                if (G.get(project.pro_num).right.size()-1>=project.dot_position){
+                    String next_Symbol = G.get(project.pro_num).right.get(project.dot_position);
+                    if (!inVT(next_Symbol)){
+                        // 下个文法符号不是非终结符
+                        continue;
                     }
+                    else {
+                        for (Iterator it2 = indexToV.get(next_Symbol).iterator();it2.hasNext();){
+                            int g_num = (int)it2.next();
+                            Project new_project = new Project();
+                            new_project.pro_num = g_num;
+                            new_project.dot_position = 0;
+                            if (!if_in_Set(J,new_project)){
+                                J2.set.add(new_project);
+                                change = true;
+                            }
+                        }//for
+                    }//else
                 }
             }
         }
-        return J;
+        return J2;
     }
 
     public boolean in_statusVector(Status s){
         boolean flag = false;
         for (int i=0;i<statusVector.size();i++){
             if (s.set.size()==statusVector.get(i).set.size()){
-                if (s.set.equals(statusVector.get(i).set)){
-                    // 若项集s和项集族中第i个项集相同
+                Status si = statusVector.get(i); // 从statusVector中选出一个set集si
+                int count=0;
+                for (Iterator it = s.set.iterator();it.hasNext();){// 对s中的所有对象进行循环
+                    Project tmp_p = (Project)it.next();
+                    if (!if_in_Set(si,tmp_p)){
+                        break;// 如果tmp_p不在si里，就立刻跳出内层循环
+                    }
+                    count++;
+                }
+                if (count==s.set.size()){
+                    // 说明si和s完全匹配
                     flag = true;
                     break;
                 }
@@ -604,15 +365,22 @@ public class Parser {
     public Status GOTO(Status I,String Symbol){
         Status prj_in_I = new Status();
         prj_in_I.set = new HashSet<>();
-        for (Iterator it = I.set.iterator();it.hasNext();){
-            Project tmp_prj = (Project) it.next();
-            String next_symbol = G.get(tmp_prj.pro_num).right.get(tmp_prj.dot_position);
-            if (next_symbol.equals(Symbol)){
-                prj_in_I.set.add(tmp_prj);
+        for (Iterator it = I.set.iterator();it.hasNext();){// for循环找出项集I中所有【下个符号为Symbol的产生式】加入prj_in_I中
+            Project tmp_prj = (Project) it.next(); // I中的某一条产生式tmp_prj
+            Project new_prj = new Project();
+            new_prj.pro_num = tmp_prj.pro_num;
+            new_prj.dot_position = tmp_prj.dot_position;// 解决java对象的引用，避免修改了原始的数据
+
+            if (G.get(new_prj.pro_num).right.size()-1>=new_prj.dot_position){
+                // 如果dot在产生式右侧的长度(-1)之内,则允许继续向后读入文法符号
+                String next_symbol = G.get(new_prj.pro_num).right.get(new_prj.dot_position);
+                if (next_symbol.equals(Symbol)){
+                    new_prj.dot_position++;
+                    prj_in_I.set.add(new_prj);
+                }
             }
         }
-        Status new_item = CLOSURE(prj_in_I);
-        return new_item;
+        return CLOSURE(prj_in_I);
     }
 
     public void items(){
@@ -624,8 +392,9 @@ public class Parser {
         status_init.set = new HashSet<>();
         prj_init.pro_num = 0;// 对应G中的增广文法产生式
         prj_init.dot_position=0;
-        prj_init.successors = null;
         status_init.set.add(prj_init);
+
+        status_init = CLOSURE(status_init);
         statusVector.add(status_init);
         boolean change = true;
         while (change){
@@ -633,9 +402,9 @@ public class Parser {
             for (int i=0;i<statusVector.size();i++){
                 // 对于项集族中的每一个产生式I
                 Status I = statusVector.get(i);
-                for (int j=0;j<_V2.length;j++){
+                for (int j=0;j<_VT2.length;j++){
                     // 对文法符号中的每一个变量X
-                    String X = _V2[j];
+                    String X = _VT2[j];
                     Status new_status = GOTO(I,X);
                     if (new_status.set.size()!=0 && in_statusVector(new_status)==false){
                         // 若GOTO(I,X)不为空，且不在项集族中,则加入项集族
@@ -645,6 +414,27 @@ public class Parser {
                 }
             }
         }
+    }
+
+    public void print_items(){
+        System.out.println("LR(0)项集族："+statusVector.size()+"个");
+        for (int i=0;i<statusVector.size();i++){
+            Status I = statusVector.get(i);
+            System.out.println("-----I("+i+"):"+I.set.size()+"个-----");
+            int count = 0;
+            for (Iterator it = I.set.iterator();it.hasNext();){
+                Project tmp_p = (Project)it.next();
+                Grammar tmp_g = G.get(tmp_p.pro_num);
+                System.out.print("文法"+count+":"+tmp_g.left+"->");
+                for (int j=0;j<tmp_g.right.size();j++){
+                    System.out.print(tmp_g.right.get(j));
+                }
+                System.out.print("|");
+                System.out.println("dot:"+tmp_p.dot_position);
+                count++;
+            }
+        }
+        System.out.println();
     }
 
     public Parser(){
@@ -665,8 +455,8 @@ public class Parser {
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
-        //get_status();
-        //print_table();
+        items(); // 生成LR(0)项集族
+        print_items();
     }
 }
 
@@ -684,7 +474,6 @@ class Project{
     // LR(0) item
     int pro_num;
     int dot_position;
-    HashSet<String> successors;
 }
 
 class Status{
