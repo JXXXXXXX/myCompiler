@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="240">
+              <caret line="10" column="27" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="364" column="45" selection-start-line="364" selection-start-column="39" selection-end-line="364" selection-end-column="45" />
+            <state relative-caret-position="431">
+              <caret line="422" column="33" selection-start-line="422" selection-start-column="32" selection-end-line="422" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -60,6 +60,7 @@
       <find>judge_conflict</find>
       <find>statuses</find>
       <find>P</find>
+      <find>#</find>
     </findStrings>
     <replaceStrings>
       <replace>token</replace>
@@ -89,8 +90,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="176" />
-    <option name="y" value="66" />
+    <option name="x" value="65" />
+    <option name="y" value="35" />
     <option name="width" value="1600" />
     <option name="height" value="710" />
   </component>
@@ -99,7 +100,11 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -167,7 +172,8 @@
       <workItem from="1557211190651" duration="807000" />
       <workItem from="1557646117179" duration="20000" />
       <workItem from="1557756624716" duration="3561000" />
-      <workItem from="1557816735339" duration="8562000" />
+      <workItem from="1557816735339" duration="8982000" />
+      <workItem from="1557831659768" duration="1653000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -274,11 +280,18 @@
       <option name="project" value="LOCAL" />
       <updated>1557760207830</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="成功求得了LR0项集族(os:debug了一下午，太感动了，要哭了)">
+      <created>1557825617986</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1557825617986</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77637000" />
+    <option name="totallyTimeSpent" value="79710000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -291,6 +304,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.14410187" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -301,7 +315,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.6770538" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.96033996" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.5439094" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -381,25 +395,10 @@
     <MESSAGE value="get_closure函数有问题" />
     <MESSAGE value="文法G是增广文法" />
     <MESSAGE value="完成了CLOSURE,GOTO,items三个函数，但并未调试" />
-    <option name="LAST_COMMIT_MESSAGE" value="完成了CLOSURE,GOTO,items三个函数，但并未调试" />
+    <MESSAGE value="成功求得了LR0项集族(os:debug了一下午，太感动了，要哭了)" />
+    <option name="LAST_COMMIT_MESSAGE" value="成功求得了LR0项集族(os:debug了一下午，太感动了，要哭了)" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/company/Parser.java</url>
-          <line>407</line>
-          <properties />
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/company/Parser.java</url>
-          <line>365</line>
-          <properties />
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="this" />
@@ -441,15 +440,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="240">
+          <caret line="10" column="27" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="364" column="45" selection-start-line="364" selection-start-column="39" selection-end-line="364" selection-end-column="45" />
+        <state relative-caret-position="431">
+          <caret line="422" column="33" selection-start-line="422" selection-start-column="32" selection-end-line="422" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

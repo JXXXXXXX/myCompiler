@@ -12,8 +12,8 @@ public class Parser {
     public Vector<Grammar> G;
     public Vector<String> V,T;
     public HashMap<String, HashSet<String>> FIRST,FOLLOW;
-    public Atable action;
-    public Gtable goTo;
+    public Atable ACTION;
+    public Gtable GOTO;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
     public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
                             _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
@@ -249,7 +249,7 @@ public class Parser {
         for(int i=0;i<V.size();i++){
             FOLLOW.put(V.get(i),new HashSet<>());
         }
-        FOLLOW.get("P").add("#");
+        FOLLOW.get("P").add("$");
 
         boolean change = true;
         String symbolRight;
@@ -417,46 +417,82 @@ public class Parser {
     }
 
     public void print_items(){
-        System.out.println("LR(0)项集族："+statusVector.size()+"个");
+        System.out.println("----------LR(0)项集族："+statusVector.size()+"个----------");
         for (int i=0;i<statusVector.size();i++){
             Status I = statusVector.get(i);
-            System.out.println("-----I("+i+"):"+I.set.size()+"个-----");
-            int count = 0;
+            System.out.println("###I("+i+")###");
+
             for (Iterator it = I.set.iterator();it.hasNext();){
                 Project tmp_p = (Project)it.next();
                 Grammar tmp_g = G.get(tmp_p.pro_num);
-                System.out.print("文法"+count+":"+tmp_g.left+"->");
+                System.out.print("  "+tmp_g.left+"->");
+                int count = 0;
                 for (int j=0;j<tmp_g.right.size();j++){
+                    if (count==tmp_p.dot_position)
+                        System.out.print(".");
                     System.out.print(tmp_g.right.get(j));
+                    count++;
                 }
-                System.out.print("|");
-                System.out.println("dot:"+tmp_p.dot_position);
-                count++;
+                System.out.println();
             }
         }
         System.out.println();
     }
 
+    public void print_G(){
+        // 打印文法G
+        System.out.println("------G(是增广文法)---------");
+        for(int i=0;i<G.size();i++){
+            System.out.print(i+":"+G.get(i).left);
+            System.out.print("->");
+            for (int j=0;j<G.get(i).right.size();j++){
+                System.out.print(G.get(i).right.get(j));
+            }
+            System.out.println();
+        }
+    }
+
+    public void print_firstANDfollow(){
+        // 打印first&follow
+        System.out.println("-------first---------");
+        for (Object key:FIRST.keySet()){
+            System.out.println(key+":"+FIRST.get(key));
+        }
+        System.out.println("------follow---------");
+        for (Object key:FOLLOW.keySet()){
+            System.out.println(key+":"+FOLLOW.get(key));
+        }
+    }
+
+    public void printALLINFO(){
+        print_G(); // 打印文法G
+        print_firstANDfollow(); // 打印first和follow集
+        print_items(); // 打印LR(0)项
+    }
+
+    public void get_AnalysisTable(){
+        // 生成ACTION表和GOTO表
+        ACTION.map = new HashMap<>();
+        GOTO.map = new HashMap<>();
+
+
+    }
+
     public Parser(){
         // 变量初始化
-        G = new Vector<Grammar>();  // 文法
-        V = new Vector<String>();   // 非终结符
-        T = new Vector<String>();   // 终结符
+        G = new Vector<>();  // 文法
+        V = new Vector<>();   // 非终结符
+        T = new Vector<>();   // 终结符
         FIRST = new HashMap<>();
         FOLLOW = new HashMap<>();
         indexToV = new HashMap<>();
         statuses = new HashMap<>();
-        action = new Atable();
-        action.map = new HashMap<>();
-        goTo = new Gtable();
-        goTo.map = new HashMap<>();
 
 
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         items(); // 生成LR(0)项集族
-        print_items();
     }
 }
 
@@ -482,9 +518,13 @@ class Status{
 }
 
 class Atable{
-    HashMap<Integer,HashMap<String,String>> map;
+    HashMap<Integer,HashMap<String,
+            HashMap<String,Integer>
+            >> map;
 }
 
 class Gtable{
-    HashMap<Integer,HashMap<String,Integer>> map;
+    HashMap<Integer,HashMap<String,
+            Integer
+            >> map;
 }
