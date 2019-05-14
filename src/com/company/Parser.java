@@ -1,8 +1,5 @@
 package com.company;
 
-import sun.dc.pr.PRError;
-
-import java.awt.print.PrinterAbortException;
 import java.io.*;
 import java.util.*;
 
@@ -17,10 +14,11 @@ public class Parser {
     public Gtable GOTO;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
     public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
-                            _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
-    public static String[]  _V2={"START","P","T","F"},
+                            _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"},
+                            _VT={"START","P","D","S","L","E","C","T","F","id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
+/*    public static String[]  _V2={"START","P","T","F"},
                             _T2={"id","+","*","(",")"},
-                            _VT2={"START","P","T","F","id","+","*","(",")"};
+                            _VT2={"START","P","T","F","id","+","*","(",")"};*/
     public Vector<Status> statusVector; // LR(0)项集族
 
 
@@ -87,15 +85,15 @@ public class Parser {
 
     public void get_garmmer(){
         // 1. 生成 V,T向量
-        for(int i=0;i<_V2.length;i++){
-            V.add(_V2[i]);
+        for(int i=0;i<_V.length;i++){
+            V.add(_V[i]);
         }
-        for(int i=0;i<_T2.length;i++){
-            T.add(_T2[i]);
+        for(int i=0;i<_T.length;i++){
+            T.add(_T[i]);
         }
 
         // 2. 读文件
-        String filepath = "E://Grammar2.txt";
+        String filepath = "input/Grammar.txt";
         readfile(filepath);
         // 3.增广文法
         Grammar g0 = new Grammar();
@@ -404,9 +402,11 @@ public class Parser {
             for (int i=0;i<statusVector.size();i++){
                 // 对于项集族中的每一个产生式I
                 Status I = statusVector.get(i);
-                for (int j=0;j<_VT2.length;j++){
+                for (int j=0;j<_VT.length;j++){
                     // 对文法符号中的每一个变量X
-                    String X = _VT2[j];
+                    if (_VT[j].equals("~"))
+                        continue;
+                    String X = _VT[j];
                     Status new_status = GOTO(I,X);
                     if (new_status.set.size()!=0 && in_statusVector(new_status)==false){
                         // 若GOTO(I,X)不为空，且不在项集族中,则加入项集族
@@ -621,18 +621,18 @@ public class Parser {
 
     public void printAnalysisTable(){
         System.out.println("------------ACITON------------");
-        for (int i=0;i<_T2.length;i++){
-            System.out.print("   "+_T2[i]+"  ");
+        for (int i=0;i<_T.length;i++){
+            System.out.print("   "+_T[i]+"  ");
         }
         System.out.print("  $  ");
         System.out.println();
 
         for (int i=0;i<ACTION.map.size();i++){
             System.out.print(i+":");
-            for (int j=0;j<_T2.length;j++){
-                if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T2[j])!=null){
-                    String s = (String) ACTION.map.get(i).get(_T2[j])[0];
-                    int num= (int) ACTION.map.get(i).get(_T2[j])[1];
+            for (int j=0;j<_T.length;j++){
+                if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T[j])!=null){
+                    String s = (String) ACTION.map.get(i).get(_T[j])[0];
+                    int num= (int) ACTION.map.get(i).get(_T[j])[1];
                     System.out.print("  "+s+num+"  ");
                 }
                 else {
@@ -652,15 +652,15 @@ public class Parser {
         }
 
         System.out.println("------------GOTO------------");
-        for (int i=1;i<_V2.length;i++){
-            System.out.print("   "+_V2[i]+"    ");
+        for (int i=1;i<_V.length;i++){
+            System.out.print("   "+_V[i]+"    ");
         }
         System.out.println();
         for (int i=0;i<ACTION.map.size();i++){
             System.out.print(i+":");
-            for (int j=1;j<_V2.length;j++){
-                if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V2[j])!=null){
-                    int num= GOTO.map.get(i).get(_V2[j]);
+            for (int j=1;j<_V.length;j++){
+                if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V[j])!=null){
+                    int num= GOTO.map.get(i).get(_V[j]);
                     System.out.print("   "+num+"  ");
                 }
                 else {
@@ -685,8 +685,10 @@ public class Parser {
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
+        //print_firstANDfollow();
         items(); // 生成LR(0)项集族
         get_AnalysisTable();
+        //System.out.println("finish");
     }
 }
 
@@ -696,7 +698,7 @@ class Grammar{
 
     Grammar(){
         left = null;
-        right = new Vector<String>();
+        right = new Vector<>();
     }
 }
 
