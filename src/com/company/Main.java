@@ -8,7 +8,7 @@ public class Main {
 	// write your code here
         //Lexer lexer = new Lexer();
         Parser parser = new Parser();
-        parser.printALLINFO();
+        //parser.printALLINFO();
 
     }
 }

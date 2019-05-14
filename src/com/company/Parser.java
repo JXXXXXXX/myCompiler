@@ -2,6 +2,7 @@ package com.company;
 
 import sun.dc.pr.PRError;
 
+import java.awt.print.PrinterAbortException;
 import java.io.*;
 import java.util.*;
 
@@ -340,6 +341,7 @@ public class Parser {
     }
 
     public boolean in_statusVector(Status s){
+        // 判断项集s是否在statusVector中
         boolean flag = false;
         for (int i=0;i<statusVector.size();i++){
             if (s.set.size()==statusVector.get(i).set.size()){
@@ -433,6 +435,8 @@ public class Parser {
                     System.out.print(tmp_g.right.get(j));
                     count++;
                 }
+                if (count==tmp_p.dot_position)
+                    System.out.print(".");
                 System.out.println();
             }
         }
@@ -468,14 +472,203 @@ public class Parser {
         print_G(); // 打印文法G
         print_firstANDfollow(); // 打印first和follow集
         print_items(); // 打印LR(0)项
+        printAnalysisTable(); // 打印ACTION和GOTO分析表
+    }
+
+    public String getNextSymbol(Project p){
+        // 获得文法p的下一个字符，若没有则返回null
+        String nextSymbol = null;
+        if (p.pro_num>=0 && p.pro_num<G.size()){
+            if (p.dot_position>=0 && p.dot_position<=G.get(p.pro_num).right.size()-1){
+                nextSymbol = G.get(p.pro_num).right.get(p.dot_position);
+            }
+        }
+        return nextSymbol;
+    }
+
+    public int getIndexOfItem(Status s){
+        // 判断一个LR0项s的在statusVector中的序号
+        int index=-1;
+        for (int i=0;i<statusVector.size();i++){
+            if (s.set.size()==statusVector.get(i).set.size()){
+                Status si = statusVector.get(i); // 从statusVector中选出一个set集si
+                int count=0;
+                for (Iterator it = s.set.iterator();it.hasNext();){// 对s中的所有对象进行循环
+                    Project tmp_p = (Project)it.next();
+                    if (!if_in_Set(si,tmp_p)){
+                        break;// 如果tmp_p不在si里，就立刻跳出内层循环
+                    }
+                    count++;
+                }
+                if (count==s.set.size()){
+                    // 说明si和s完全匹配
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
     }
 
     public void get_AnalysisTable(){
         // 生成ACTION表和GOTO表
+        ACTION = new Atable();
+        GOTO = new Gtable();
         ACTION.map = new HashMap<>();
         GOTO.map = new HashMap<>();
 
+        for (int i=0;i<statusVector.size();i++){// 访问所有LR0项
+            Status I = statusVector.get(i);
+            for (Iterator it = I.set.iterator();it.hasNext();){// 遍历项I的每一个产生式
+                Project p = (Project)it.next();
+                String nextSymbol = getNextSymbol(p);
+                if (nextSymbol!=null){
+                    if (inVT(nextSymbol)){
+                        // 如果是语法变量V--填写GOTO
+                        int index = getIndexOfItem(GOTO(I,nextSymbol));
+                        if (index!=-1){
+                            if (GOTO.map.get(i)==null){
+                                HashMap<String,Integer> map1 = new HashMap<>();
+                                map1.put(nextSymbol,index);
+                                GOTO.map.put(i,map1);// 加入GOTO
+                            }
+                            else{
+                                GOTO.map.get(i).put(nextSymbol,index);
+                            }
+                        }
+                    }
+                    else if (nextSymbol.equals("~")){
+                        // 若是形如A->.~,则执行-归约-
+                        // 对应归约的产生式号：p.pro_num
+                        String left = G.get(p.pro_num).left;
+                        HashSet<String> FOLLOW_A = FOLLOW.get(left);
+                        for (Iterator it2 = FOLLOW_A.iterator();it2.hasNext();){//对于FOLLOW(A)中的所有符号
+                            String a = (String)it2.next();
+                            Object [] rj = new Object[2];
+                            rj[0]="r";
+                            rj[1]=p.pro_num;
 
+                            if (ACTION.map.get(i)==null){
+                                HashMap<String,Object[]> map2 = new HashMap<>();
+                                map2.put(a,rj);
+                                ACTION.map.put(i,map2);
+                            }
+                            else {
+                                ACTION.map.get(i).put(a,rj);
+                            }
+                        }
+                    }
+                    else {
+                        // 如果是【终结符号T】--填写ACTION
+                        int index = getIndexOfItem(GOTO(I,nextSymbol));
+                        if (index!=-1){
+                            Object [] sj = new Object[2];
+                            sj[0]="s";
+                            sj[1]=index;
+                            if (ACTION.map.get(i)==null){
+                                HashMap<String,Object[]> map2 = new HashMap<>();
+                                map2.put(nextSymbol,sj);
+                                ACTION.map.put(i,map2);
+                            }
+                            else {
+                                ACTION.map.get(i).put(nextSymbol,sj);
+                            }
+                        }
+                    }//else
+                }
+                else {
+                    // nextSymbol = null：形如A-a.的产生式--进行归约
+                    // 对应归约的产生式号：p.pro_num
+                    if (p.pro_num!=0){
+                        String left = G.get(p.pro_num).left;
+                        HashSet<String> FOLLOW_A = FOLLOW.get(left);
+                        for (Iterator it2 = FOLLOW_A.iterator();it2.hasNext();){//对于FOLLOW(A)中的所有符号
+                            Object [] rj = new Object[2];
+                            rj[0]="r";
+                            rj[1]=p.pro_num;
+                            String a = (String)it2.next();
+                            if (ACTION.map.get(i)==null){
+                                HashMap<String,Object[]> map2 = new HashMap<>();
+                                map2.put(a,rj);
+                                ACTION.map.put(i,map2);
+                            }
+                            else {
+                                ACTION.map.get(i).put(a,rj);
+                            }
+
+                        }
+                    }
+                    else {
+                        // p.pro_num=0,对于与S'->S. 则在ACTION[I,$]=ACC
+                        Object [] acc = new Object[2];
+                        acc[0]="acc";
+                        acc[1]=0;
+                        if (ACTION.map.get(i)==null){
+                            HashMap<String,Object[]> map2 = new HashMap<>();
+                            map2.put("$",acc);
+                            ACTION.map.put(i,map2);
+                        }
+                        else {
+                            ACTION.map.get(i).put("$",acc);
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    public void printAnalysisTable(){
+        System.out.println("------------ACITON------------");
+        for (int i=0;i<_T2.length;i++){
+            System.out.print("   "+_T2[i]+"  ");
+        }
+        System.out.print("  $  ");
+        System.out.println();
+
+        for (int i=0;i<ACTION.map.size();i++){
+            System.out.print(i+":");
+            for (int j=0;j<_T2.length;j++){
+                if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T2[j])!=null){
+                    String s = (String) ACTION.map.get(i).get(_T2[j])[0];
+                    int num= (int) ACTION.map.get(i).get(_T2[j])[1];
+                    System.out.print("  "+s+num+"  ");
+                }
+                else {
+                    System.out.print("  --  ");
+                }
+            }
+            // 额外判断一列'$'
+            if (ACTION.map.get(i)!=null && ACTION.map.get(i).get("$")!=null){
+                String s = (String) ACTION.map.get(i).get("$")[0];
+                int num= (int) ACTION.map.get(i).get("$")[1];
+                System.out.print("  "+s+num+"  ");
+            }
+            else {
+                System.out.print("  --  ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("------------GOTO------------");
+        for (int i=1;i<_V2.length;i++){
+            System.out.print("   "+_V2[i]+"    ");
+        }
+        System.out.println();
+        for (int i=0;i<ACTION.map.size();i++){
+            System.out.print(i+":");
+            for (int j=1;j<_V2.length;j++){
+                if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V2[j])!=null){
+                    int num= GOTO.map.get(i).get(_V2[j]);
+                    System.out.print("   "+num+"  ");
+                }
+                else {
+                    System.out.print("  --  ");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public Parser(){
@@ -493,6 +686,7 @@ public class Parser {
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         items(); // 生成LR(0)项集族
+        get_AnalysisTable();
     }
 }
 
@@ -519,7 +713,7 @@ class Status{
 
 class Atable{
     HashMap<Integer,HashMap<String,
-            HashMap<String,Integer>
+            Object[]
             >> map;
 }
 
