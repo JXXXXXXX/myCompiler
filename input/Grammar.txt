@@ -1,5 +1,5 @@
 P ->D S
-D ->L id ; D 
+D ->L id;D 
 D ->~
 L -> int  
 L ->float

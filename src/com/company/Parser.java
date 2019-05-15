@@ -1,12 +1,13 @@
 package com.company;
 
+import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
+
 import java.io.*;
 import java.util.*;
 
 public class Parser {
     // -----变量声明部分-----
     private String file_buffer;
-    public HashMap<Integer,Status> statuses;
     public Vector<Grammar> G;
     public Vector<String> V,T;
     public HashMap<String, HashSet<String>> FIRST,FOLLOW;
@@ -19,8 +20,10 @@ public class Parser {
 /*    public static String[]  _V2={"START","P","T","F"},
                             _T2={"id","+","*","(",")"},
                             _VT2={"START","P","T","F","id","+","*","(",")"};*/
-    public Vector<Status> statusVector; // LR(0)项集族
-
+    public Vector<Status> LRO_items; // LR(0)项集族
+    public Stack<Integer> status_Stack; // 状态栈
+    public Stack<String> symbol_Stack;  // 符号栈
+    public String[] keyword,op;
 
     // -----函数实现部分-----
     public void readfile(String filepath){
@@ -338,12 +341,12 @@ public class Parser {
         return J2;
     }
 
-    public boolean in_statusVector(Status s){
-        // 判断项集s是否在statusVector中
+    public boolean in_LRO_items(Status s){
+        // 判断项集s是否在LRO_items中
         boolean flag = false;
-        for (int i=0;i<statusVector.size();i++){
-            if (s.set.size()==statusVector.get(i).set.size()){
-                Status si = statusVector.get(i); // 从statusVector中选出一个set集si
+        for (int i=0;i<LRO_items.size();i++){
+            if (s.set.size()==LRO_items.get(i).set.size()){
+                Status si = LRO_items.get(i); // 从LRO_items中选出一个set集si
                 int count=0;
                 for (Iterator it = s.set.iterator();it.hasNext();){// 对s中的所有对象进行循环
                     Project tmp_p = (Project)it.next();
@@ -385,7 +388,7 @@ public class Parser {
 
     public void get_items(){
         // 生成LR(0)项集族函数
-        statusVector = new Vector<>();
+        LRO_items = new Vector<>();
 
         Project prj_init = new Project();
         Status status_init = new Status();
@@ -395,22 +398,22 @@ public class Parser {
         status_init.set.add(prj_init);
 
         status_init = CLOSURE(status_init);
-        statusVector.add(status_init);
+        LRO_items.add(status_init);
         boolean change = true;
         while (change){
             change = false;
-            for (int i=0;i<statusVector.size();i++){
+            for (int i=0;i<LRO_items.size();i++){
                 // 对于项集族中的每一个产生式I
-                Status I = statusVector.get(i);
+                Status I = LRO_items.get(i);
                 for (int j=0;j<_VT.length;j++){
                     // 对文法符号中的每一个变量X
                     if (_VT[j].equals("~"))
                         continue;
                     String X = _VT[j];
                     Status new_status = GOTO(I,X);
-                    if (new_status.set.size()!=0 && in_statusVector(new_status)==false){
+                    if (new_status.set.size()!=0 && in_LRO_items(new_status)==false){
                         // 若GOTO(I,X)不为空，且不在项集族中,则加入项集族
-                        statusVector.add(new_status);
+                        LRO_items.add(new_status);
                         change = true;
                     }
                 }
@@ -419,9 +422,9 @@ public class Parser {
     }
 
     public void print_items(){
-        System.out.println("----------LR(0)项集族："+statusVector.size()+"个----------");
-        for (int i=0;i<statusVector.size();i++){
-            Status I = statusVector.get(i);
+        System.out.println("----------LR(0)项集族："+LRO_items.size()+"个----------");
+        for (int i=0;i<LRO_items.size();i++){
+            Status I = LRO_items.get(i);
             System.out.println("###I("+i+")###");
 
             for (Iterator it = I.set.iterator();it.hasNext();){
@@ -487,11 +490,11 @@ public class Parser {
     }
 
     public int getIndexOfItem(Status s){
-        // 判断一个LR0项s的在statusVector中的序号
+        // 判断一个LR0项s的在LRO_items中的序号
         int index=-1;
-        for (int i=0;i<statusVector.size();i++){
-            if (s.set.size()==statusVector.get(i).set.size()){
-                Status si = statusVector.get(i); // 从statusVector中选出一个set集si
+        for (int i=0;i<LRO_items.size();i++){
+            if (s.set.size()==LRO_items.get(i).set.size()){
+                Status si = LRO_items.get(i); // 从LRO_items中选出一个set集si
                 int count=0;
                 for (Iterator it = s.set.iterator();it.hasNext();){// 对s中的所有对象进行循环
                     Project tmp_p = (Project)it.next();
@@ -517,8 +520,8 @@ public class Parser {
         ACTION.map = new HashMap<>();
         GOTO.map = new HashMap<>();
 
-        for (int i=0;i<statusVector.size();i++){// 访问所有LR0项
-            Status I = statusVector.get(i);
+        for (int i=0;i<LRO_items.size();i++){// 访问所有LR0项
+            Status I = LRO_items.get(i);
             for (Iterator it = I.set.iterator();it.hasNext();){// 遍历项I的每一个产生式
                 Project p = (Project)it.next();
                 String nextSymbol = getNextSymbol(p);
@@ -671,27 +674,190 @@ public class Parser {
         }
     }
 
-    public void do_Analysis(){
-        // LR语法分析算法
+    public void output_AnalysisTable(){
+        try {
+            File writeName = new File("output/AnalysisTable.md");
+            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+            try (FileWriter writer = new FileWriter(writeName);
+                 BufferedWriter out = new BufferedWriter(writer)
+            ) {
+                out.write("**ACTION**\r\n"); // \r\n即为换行
+                String out_line = "| |";
+                for (int i=0;i<_T.length;i++){
+                    out_line=out_line+_T[i]+"|";
+                }
+                out_line=out_line+"$|\r\n";
+                out.write(out_line);// 输出表格字段
+
+                out_line = "|";
+                for (int i=0;i<_T.length+2;i++){
+                    out_line=out_line+"-|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 输出分隔符
+
+                for (int i=0;i<ACTION.map.size();i++){
+                    out_line="|"+i+"|";
+                    for (int j=0;j<_T.length;j++){
+                        if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T[j])!=null){
+                            String s = (String) ACTION.map.get(i).get(_T[j])[0];
+                            int num= (int) ACTION.map.get(i).get(_T[j])[1];
+                            out_line=out_line+s+num+"|";
+                        }
+                        else {
+                            out_line=out_line+"null|";
+                        }
+                    }
+                    // 额外判断一列'$'
+                    if (ACTION.map.get(i)!=null && ACTION.map.get(i).get("$")!=null){
+                        String s = (String) ACTION.map.get(i).get("$")[0];
+                        int num= (int) ACTION.map.get(i).get("$")[1];
+                        out_line=out_line+s+num+"|";
+                    }
+                    else {
+                        out_line=out_line+"null|";
+                    }
+                    out_line=out_line+"\r\n";
+                    out.write(out_line);// 输出表的内容(每行)
+                }
+
+                out.write("**GOTO**\r\n");
+                out_line = "| |";
+                for (int i=1;i<_V.length;i++){
+                    out_line=out_line+_V[i]+"|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 输出表格字段
+
+                out_line = "|";
+                for (int i=0;i<_V.length;i++){
+                    out_line=out_line+"-|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 分隔符
+
+                for (int i=0;i<ACTION.map.size();i++){
+                    out_line="|"+i+"|";
+                    for (int j=1;j<_V.length;j++){
+                        if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V[j])!=null){
+                            int num= GOTO.map.get(i).get(_V[j]);
+                            out_line=out_line+num+"|";
+                        }
+                        else {
+                            out_line=out_line+"null|";
+                        }
+                    }
+                    out_line=out_line+"\r\n";
+                    out.write(out_line);// 输出表的内容(每行)
+                }
+
+                out.flush(); // 把缓存区内容压入文件
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void do_Analysis(Vector<Token> tokens){
+/*      LR语法分析算法
+        输入：1.LR语法分析表ACTION和GOTO
+             2.token输入串
+
+*/
+        int s;
+        Token a;
+        Object action_obj [];
+
+        // 初始化状态栈和符号栈
+        status_Stack.push(0);
+        symbol_Stack.push("$");
+
+        for (int i=0;i<tokens.size();i++){
+            s = status_Stack.peek();// 获得栈顶状态
+            a = tokens.get(i); //获得当前输入的第一个token
+            if (ACTION.map.get(s).get(a.type)!=null){
+                action_obj=ACTION.map.get(s).get(a.type);
+                if (action_obj[0].equals("s")){
+                    // 移入
+                    status_Stack.push((int)action_obj[1]);
+                    if (a.type.equals("op")){
+                        // 如果输入单词是一个操作符，则根据a.value去操作符表中找出对应的符号
+                        String op_sym = new String(op[Integer.getInteger(a.value)]);
+                        symbol_Stack.push(op_sym);
+                    }
+                    else {
+                        symbol_Stack.push(a.type);
+                    }
+                }
+                else if (action_obj[0].equals("r")){
+                    // 归约
+                    Grammar g = G.get((int)action_obj[1]);// 按产生式g进行归约
+                    for (int j=0;j<g.right.size();j++){
+                        if (!g.right.get(j).equals("~")){
+                            // 若不为空，则从栈顶弹出文法符号
+                            symbol_Stack.pop();
+                        }
+                    }
+                    symbol_Stack.push(g.left);
+                    status_Stack.pop();
+                    status_Stack.push(GOTO.map.get(status_Stack.peek()).get(g.left));
+
+                }
+                else if (action_obj[0].equals("acc")){
+                    // 接受
+                    System.out.println("完成语法分析");
+                    break;
+                }
+                else {
+                    // 出错处理
+                    System.out.println("[error]:token<"+a.type+a.value+">");
+                }
+            }
+            else {
+                // 出错处理
+                System.out.println("[error]:所访问的ACTION表项为空");
+            }
+
+            // 输出当前栈的状态
+            Stack<String> tmpstack = new Stack<>();
+            while(!symbol_Stack.empty()){
+                String s1  = symbol_Stack.pop();
+                tmpstack.push(s1);
+            }
+            System.out.print("符号栈:");
+            while(!tmpstack.empty()){
+                String s2 = tmpstack.pop();
+                symbol_Stack.push(s2);
+                System.out.print(s2+" ");
+            }
+            System.out.println();
+
+        }// for
 
     }
 
     public Parser(){
         // 变量初始化
-        G = new Vector<>();  // 文法
-        V = new Vector<>();   // 非终结符
-        T = new Vector<>();   // 终结符
+        G = new Vector<>();
+        V = new Vector<>();
+        T = new Vector<>();
         FIRST = new HashMap<>();
         FOLLOW = new HashMap<>();
         indexToV = new HashMap<>();
-        statuses = new HashMap<>();
+        status_Stack = new Stack<>();
+        symbol_Stack = new Stack<>();
 
+        Lexer lexer = new Lexer();
+        keyword = lexer.keyword;
+        op = lexer.op;
 
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         get_items(); // 生成LR(0)项集族
         get_AnalysisTable();
+        //output_AnalysisTable();
+        do_Analysis(lexer.tokens);
         //System.out.println("finish");
     }
 }
