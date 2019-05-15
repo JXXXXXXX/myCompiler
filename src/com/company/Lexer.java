@@ -8,7 +8,7 @@ public class Lexer {
     public String input_code;   // 输入代码
     public Vector<Token> tokens;    // 生成的token序列
     public String[] keyword={"if","then","else","while","do","int","float"},
-                    op={"+","-","*","/", "!=", ">",">=", "<","<=", "=","==", "(",")",";",};
+                    op={"+","-","*","/","!=",">",">=","<","<=","=","==","(",")",";"};
     public Vector<String> idTable,numTable;
 
     public void print_token(Vector<Token> token){
@@ -121,7 +121,7 @@ public class Lexer {
     public Token Scanner()
     {
         Token token = new Token();
-        StringBuffer morpheme = new StringBuffer();
+        String morpheme = new String();
 
         while(input_code.charAt(index)==' '){
             // 跳过空白字符
@@ -131,18 +131,18 @@ public class Lexer {
 
         if (isLetter(ch))
         {
-            morpheme.append(ch);
+            morpheme=morpheme+ch;
             index++;
             ch = input_code.charAt(index);
 
             while(isLetter(ch)||isDigit(ch))
             {   // 继续读入字符和数字
-                morpheme.append(ch);
+                morpheme=morpheme+ch;
                 index++;
                 ch = input_code.charAt(index);
             }
 
-            syn = searchTable(keyword,morpheme.toString());// 在关键字表中查找词素
+            syn = searchTable(keyword,morpheme);// 在关键字表中查找词素
 
             if (syn!=-1){
                 // is a keyword
@@ -152,11 +152,11 @@ public class Lexer {
             }
             else{
                 // not a keyword
-                syn=searchTable(idTable,morpheme.toString());
+                syn=searchTable(idTable,morpheme);
 
                 if (syn==-1){
                     // 不是已有的标识符
-                    idTable.add(morpheme.toString());
+                    idTable.add(morpheme);
                     syn = idTable.size();
                 }
 
@@ -170,16 +170,16 @@ public class Lexer {
             // 若第一个是数字
             while(isDigit(ch))
             {   // 若继续是数字
-                morpheme.append(ch);
+                morpheme=morpheme+ch;
                 index++;
                 ch = input_code.charAt(index);
             }
 
-            syn=searchTable(numTable,morpheme.toString());
+            syn=searchTable(numTable,morpheme);
 
             if(syn==-1)
             {
-                numTable.add(morpheme.toString());
+                numTable.add(morpheme);
                 syn=numTable.size();
             }
 
@@ -188,12 +188,12 @@ public class Lexer {
             tokens.add(token);
         }
         else if (   ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
-                    ch == ';' || ch == '(' || ch == ')' || ch == '\'')
+                    ch == ';' || ch == '(' || ch == ')' )
         {
             //若为运算符或者界符，查表得到结果
-            morpheme.append(ch);
+            morpheme=morpheme+ch;
 
-            for (int i = 0; i<op.length; i++)
+/*            for (int i = 0; i<op.length; i++)
             {
                 //查运算符界符表
                 if (op[i].equals(morpheme))
@@ -201,10 +201,11 @@ public class Lexer {
                     syn = i;
                     break;
                 }
-            }
+            }*/
+            syn = searchTable(op,Character.toString(ch));
 
             token.type="op";
-            token.value=Integer.toString(syn);
+            token.value=Integer.toString(syn-1);
             tokens.add(token);
 
             index++;//指针下移，为下一扫描做准备
@@ -226,7 +227,7 @@ public class Lexer {
             }
 
             token.type="op";
-            token.value=Integer.toString(syn);
+            token.value=Integer.toString(syn-1);
             tokens.add(token);
 
             index++;
@@ -248,7 +249,7 @@ public class Lexer {
             }
 
             token.type="op";
-            token.value=Integer.toString(syn);
+            token.value=Integer.toString(syn-1);
             tokens.add(token);
 
             index++;
@@ -270,7 +271,7 @@ public class Lexer {
             }
 
             token.type="op";
-            token.value=Integer.toString(syn);
+            token.value=Integer.toString(syn-1);
             tokens.add(token);
 
             index++;
@@ -281,7 +282,7 @@ public class Lexer {
             index+=2;
             syn=searchTable(op,"!=");
             token.type="op";
-            token.value=Integer.toString(syn);
+            token.value=Integer.toString(syn-1);
             tokens.add(token);
         }
         else if(ch=='\0')
@@ -313,7 +314,7 @@ public class Lexer {
         while(syn!=0){
             Scanner();
         }
-        //print_token(tokens);
+        print_token(tokens);
         //print_Symboltable();
     }
 }

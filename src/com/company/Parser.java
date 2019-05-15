@@ -761,12 +761,11 @@ public class Parser {
     public void do_Analysis(Vector<Token> tokens){
 /*      LR语法分析算法
         输入：1.LR语法分析表ACTION和GOTO
-             2.token输入串
-
-*/
+             2.token输入串*/
         int s;
         Token a;
         Object action_obj [];
+        String type;
 
         // 初始化状态栈和符号栈
         status_Stack.push(0);
@@ -775,19 +774,21 @@ public class Parser {
         for (int i=0;i<tokens.size();i++){
             s = status_Stack.peek();// 获得栈顶状态
             a = tokens.get(i); //获得当前输入的第一个token
-            if (ACTION.map.get(s).get(a.type)!=null){
-                action_obj=ACTION.map.get(s).get(a.type);
+
+            // 处理操作符op
+            if (a.type.equals("op"))
+                type = op[Integer.getInteger(a.value)];
+            else
+                type = a.type;
+
+            if (ACTION.map.get(s).get(type)!=null){
+                action_obj=ACTION.map.get(s).get(type);
                 if (action_obj[0].equals("s")){
                     // 移入
                     status_Stack.push((int)action_obj[1]);
-                    if (a.type.equals("op")){
-                        // 如果输入单词是一个操作符，则根据a.value去操作符表中找出对应的符号
-                        String op_sym = new String(op[Integer.getInteger(a.value)]);
-                        symbol_Stack.push(op_sym);
-                    }
-                    else {
-                        symbol_Stack.push(a.type);
-                    }
+                    symbol_Stack.push(type);
+                    System.out.print(i+":"+action_obj[0]+action_obj[1]);
+
                 }
                 else if (action_obj[0].equals("r")){
                     // 归约
@@ -802,6 +803,7 @@ public class Parser {
                     status_Stack.pop();
                     status_Stack.push(GOTO.map.get(status_Stack.peek()).get(g.left));
 
+                    System.out.print(i+":"+action_obj[0]+action_obj[1]);
                 }
                 else if (action_obj[0].equals("acc")){
                     // 接受
@@ -810,16 +812,17 @@ public class Parser {
                 }
                 else {
                     // 出错处理
-                    System.out.println("[error]:token<"+a.type+a.value+">");
+                    System.out.println("[error]:token<"+type+a.value+">");
                 }
             }
             else {
                 // 出错处理
                 System.out.println("[error]:所访问的ACTION表项为空");
+                // 循环当前的LR0项，如果有形如A->a.Db(且D->.~)的项，则把
             }
 
             // 输出当前栈的状态
-            Stack<String> tmpstack = new Stack<>();
+/*            Stack<String> tmpstack = new Stack<>();
             while(!symbol_Stack.empty()){
                 String s1  = symbol_Stack.pop();
                 tmpstack.push(s1);
@@ -830,7 +833,7 @@ public class Parser {
                 symbol_Stack.push(s2);
                 System.out.print(s2+" ");
             }
-            System.out.println();
+            System.out.println();*/
 
         }// for
 
@@ -851,14 +854,16 @@ public class Parser {
         keyword = lexer.keyword;
         op = lexer.op;
 
-        get_garmmer();  //从文件读入文法符号
+/*        get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         get_items(); // 生成LR(0)项集族
+        //print_items();
         get_AnalysisTable();
+
         //output_AnalysisTable();
         do_Analysis(lexer.tokens);
-        //System.out.println("finish");
+        //System.out.println("finish");*/
     }
 }
 
