@@ -777,7 +777,7 @@ public class Parser {
 
             // 处理操作符op
             if (a.type.equals("op"))
-                type = op[Integer.getInteger(a.value)];
+                type = op[Integer.parseInt(a.value)];
             else
                 type = a.type;
 
@@ -787,27 +787,37 @@ public class Parser {
                     // 移入
                     status_Stack.push((int)action_obj[1]);
                     symbol_Stack.push(type);
-                    System.out.print(i+":"+action_obj[0]+action_obj[1]);
+                    //System.out.print(i+":"+action_obj[0]+action_obj[1]);
 
                 }
                 else if (action_obj[0].equals("r")){
                     // 归约
-                    Grammar g = G.get((int)action_obj[1]);// 按产生式g进行归约
-                    for (int j=0;j<g.right.size();j++){
-                        if (!g.right.get(j).equals("~")){
-                            // 若不为空，则从栈顶弹出文法符号
-                            symbol_Stack.pop();
-                        }
-                    }
-                    symbol_Stack.push(g.left);
-                    status_Stack.pop();
-                    status_Stack.push(GOTO.map.get(status_Stack.peek()).get(g.left));
 
-                    System.out.print(i+":"+action_obj[0]+action_obj[1]);
+                    i--;//归约时，不读入token
+
+                    Grammar g = G.get((int)action_obj[1]);// 按产生式g进行归约
+
+                    if (g.right.get(0).equals("~")){
+                        // g形如 D->.~
+                        int next_status = GOTO.map.get(status_Stack.peek()).get(g.left);
+                        status_Stack.push(next_status);
+                        symbol_Stack.push(g.left);
+                    }
+                    else {
+                        for (int j=0;j<g.right.size();j++){
+                            symbol_Stack.pop();
+                            status_Stack.pop();
+                        }
+                        symbol_Stack.push(g.left);
+                        int next_status = GOTO.map.get(status_Stack.peek()).get(g.left);
+                        status_Stack.push(next_status);
+                    }
+
+                    //System.out.print(i+":"+action_obj[0]+action_obj[1]);
                 }
                 else if (action_obj[0].equals("acc")){
                     // 接受
-                    System.out.println("完成语法分析");
+                    System.out.println("Finish analysis.");
                     break;
                 }
                 else {
@@ -816,18 +826,39 @@ public class Parser {
                 }
             }
             else {
-                // 出错处理
-                System.out.println("[error]:所访问的ACTION表项为空");
-                // 循环当前的LR0项，如果有形如A->a.Db(且D->.~)的项，则把
+                // 循环当前的LR0项，如果有形如A->a.Db和D->.~的项，则当作GOTO(i,D)=j,跳转到状态j
+                i--;
+                Status I = LRO_items.get(s);
+                for (Iterator it = I.set.iterator();it.hasNext();){
+                    Project p = (Project)it.next();
+                    String nextSymbol = getNextSymbol(p);
+                    if (nextSymbol.equals("~")){
+                        String left = G.get(p.pro_num).left;
+                        symbol_Stack.push(left);
+                        status_Stack.push(GOTO.map.get(s).get(left));
+                    }
+                }
             }
 
-            // 输出当前栈的状态
-/*            Stack<String> tmpstack = new Stack<>();
+/*            // 输出当前栈的状态
+            System.out.print(i+":");
+            Stack<Integer> tmpstack2 = new Stack<>();
+            while(!status_Stack.empty()){
+                int i1  = status_Stack.pop();
+                tmpstack2.push(i1);
+            }
+            while(!tmpstack2.empty()){
+                int i1 = tmpstack2.pop();
+                status_Stack.push(i1);
+                System.out.print(i1+" ");
+            }
+            System.out.print("|");
+
+            Stack<String> tmpstack = new Stack<>();
             while(!symbol_Stack.empty()){
                 String s1  = symbol_Stack.pop();
                 tmpstack.push(s1);
             }
-            System.out.print("符号栈:");
             while(!tmpstack.empty()){
                 String s2 = tmpstack.pop();
                 symbol_Stack.push(s2);
@@ -854,7 +885,7 @@ public class Parser {
         keyword = lexer.keyword;
         op = lexer.op;
 
-/*        get_garmmer();  //从文件读入文法符号
+        get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
         get_items(); // 生成LR(0)项集族
@@ -863,7 +894,7 @@ public class Parser {
 
         //output_AnalysisTable();
         do_Analysis(lexer.tokens);
-        //System.out.println("finish");*/
+        //System.out.println("finish");
     }
 }
 

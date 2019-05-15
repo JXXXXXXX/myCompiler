@@ -193,16 +193,7 @@ public class Lexer {
             //若为运算符或者界符，查表得到结果
             morpheme=morpheme+ch;
 
-/*            for (int i = 0; i<op.length; i++)
-            {
-                //查运算符界符表
-                if (op[i].equals(morpheme))
-                {
-                    syn = i;
-                    break;
-                }
-            }*/
-            syn = searchTable(op,Character.toString(ch));
+            syn = searchTable(op,morpheme);
 
             token.type="op";
             token.value=Integer.toString(syn-1);
@@ -314,7 +305,7 @@ public class Lexer {
         while(syn!=0){
             Scanner();
         }
-        print_token(tokens);
+        //print_token(tokens);
         //print_Symboltable();
     }
 }
