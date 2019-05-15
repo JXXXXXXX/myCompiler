@@ -7,10 +7,30 @@ public class Lexer {
     public int syn,index;
     public String input_code;   // 输入代码
     public Vector<Token> tokens;    // 生成的token序列
-    public String[] keyword={"if","then","else","while","do"},
-                    op={"\'", "+","-","*","/", "!=", ">",">=", "<","<=", "=","==", "(",")",";",};
+    public String[] keyword={"if","then","else","while","do","int","float"},
+                    op={"+","-","*","/", "!=", ">",">=", "<","<=", "=","==", "(",")",";",};
     public Vector<String> idTable,numTable;
 
+    public void print_token(Vector<Token> token){
+        // 输出token
+        if (token!=null){
+            for (int i=0;i<token.size();i++){
+                System.out.println("<"+token.get(i).type+","+token.get(i).value+">");
+            }
+        }
+    }
+
+    public void print_Symboltable(){
+        // 打印符号表idTable和numTable
+        System.out.println("--------标识符表--------");
+        for (int i=0;i<idTable.size();i++){
+            System.out.println("<"+i+","+idTable.get(i)+">");
+        }
+        System.out.println("--------常数表--------");
+        for (int i=0;i<numTable.size();i++){
+            System.out.println("<"+i+","+numTable.get(i)+">");
+        }
+    }
 
     public static boolean isLetter(char letter){
         if(letter>='a'&&letter<='z'||letter>='A'&&letter<='Z'||letter=='_')
@@ -31,7 +51,7 @@ public class Lexer {
         // 读源程序文件
         try{
             char temp_char;
-            File file = new File("E://input.txt");
+            File file = new File("input/code.txt");
             Reader reader = new InputStreamReader(new FileInputStream(file));
             while((temp_char=(char) reader.read())!='$'){
                 input_code=input_code+temp_char;
@@ -122,7 +142,7 @@ public class Lexer {
                 ch = input_code.charAt(index);
             }
 
-            syn = searchTable(keyword,morpheme.toString());
+            syn = searchTable(keyword,morpheme.toString());// 在关键字表中查找词素
 
             if (syn!=-1){
                 // is a keyword
@@ -293,6 +313,8 @@ public class Lexer {
         while(syn!=0){
             Scanner();
         }
+        //print_token(tokens);
+        //print_Symboltable();
     }
 }
 

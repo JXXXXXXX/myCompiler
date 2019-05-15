@@ -383,7 +383,7 @@ public class Parser {
         return CLOSURE(prj_in_I);
     }
 
-    public void items(){
+    public void get_items(){
         // 生成LR(0)项集族函数
         statusVector = new Vector<>();
 
@@ -671,6 +671,11 @@ public class Parser {
         }
     }
 
+    public void do_Analysis(){
+        // LR语法分析算法
+
+    }
+
     public Parser(){
         // 变量初始化
         G = new Vector<>();  // 文法
@@ -685,8 +690,7 @@ public class Parser {
         get_garmmer();  //从文件读入文法符号
         get_first();    //获得FIRST集
         get_follow();   //获得FOLLOW集
-        //print_firstANDfollow();
-        items(); // 生成LR(0)项集族
+        get_items(); // 生成LR(0)项集族
         get_AnalysisTable();
         //System.out.println("finish");
     }
