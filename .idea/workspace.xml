@@ -26,8 +26,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="10" column="82" selection-start-line="10" selection-start-column="82" selection-end-line="10" selection-end-column="82" />
+            <state relative-caret-position="296">
+              <caret line="308" column="10" selection-start-line="308" selection-start-column="10" selection-end-line="308" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -38,10 +38,31 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="942" column="1" lean-forward="true" selection-start-line="942" selection-start-column="1" selection-end-line="942" selection-end-column="1" />
+            <state relative-caret-position="13">
+              <caret line="1005" column="35" selection-start-line="1005" selection-start-column="35" selection-end-line="1005" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1793#2527#0" />
+                <element signature="e#2532#3668#0" />
+                <element signature="e#3674#5833#0" />
+                <element signature="e#5839#6043#0" />
+                <element signature="e#6048#8106#0" />
+                <element signature="e#8111#8869#0" />
+                <element signature="e#8875#10881#0" />
+                <element signature="e#10887#11233#0" />
+                <element signature="e#11239#12710#0" />
+                <element signature="e#12716#13536#0" />
+                <element signature="e#13542#14462#0" />
+                <element signature="e#14468#15646#0" />
+                <element signature="e#15652#16602#0" />
+                <element signature="e#16608#17002#0" />
+                <element signature="e#17008#17397#0" />
+                <element signature="e#17403#17600#0" />
+                <element signature="e#17606#17979#0" />
+                <element signature="e#17985#18800#0" />
+                <element signature="e#18806#23535#0" />
+                <element signature="e#23541#25424#0" />
+                <element signature="e#25430#28816#0" />
               </folding>
             </state>
           </provider>
@@ -79,6 +100,9 @@
       <find>_T</find>
       <find>a.type</find>
       <find>searchTable</find>
+      <find>a</find>
+      <find>code</find>
+      <find>gen</find>
     </findStrings>
     <replaceStrings>
       <replace>token</replace>
@@ -114,8 +138,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="590" />
-    <option name="y" value="73" />
+    <option name="x" value="830" />
+    <option name="y" value="37" />
     <option name="width" value="980" />
     <option name="height" value="1040" />
   </component>
@@ -129,7 +153,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557912040914" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557977511756" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
@@ -198,7 +222,8 @@
       <workItem from="1557901093707" duration="10617000" />
       <workItem from="1557919630394" duration="9931000" />
       <workItem from="1557930190022" duration="988000" />
-      <workItem from="1557967664348" duration="734000" />
+      <workItem from="1557967664348" duration="9237000" />
+      <workItem from="1557979133747" duration="13224000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -354,11 +379,25 @@
       <option name="project" value="LOCAL" />
       <updated>1557929611854</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="完成语法分析。">
+      <created>1557968421009</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1557968421009</updated>
+    </task>
+    <task id="LOCAL-00024" summary="1.将状态栈和符号栈合成一个分析栈&#10;2.正在改写语法分析，将分析和中间代码生成结合">
+      <created>1557977580086</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1557977580086</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="113366000" />
+    <option name="totallyTimeSpent" value="135093000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -381,8 +420,8 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.84560907" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3286119" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.5368272" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.51983005" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -469,7 +508,8 @@
     <MESSAGE value="1.LR分析算法还有问题;&#10;2.写了个分析表输出函数，输出结果在output/AnalysisTable.md" />
     <MESSAGE value="解决词法分析器里syn序号错误的问题。" />
     <MESSAGE value="完成语法分析。" />
-    <option name="LAST_COMMIT_MESSAGE" value="完成语法分析。" />
+    <MESSAGE value="1.将状态栈和符号栈合成一个分析栈&#10;2.正在改写语法分析，将分析和中间代码生成结合" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.将状态栈和符号栈合成一个分析栈&#10;2.正在改写语法分析，将分析和中间代码生成结合" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
@@ -499,13 +539,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Vector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="750" selection-start-line="750" selection-end-line="750" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/HashMap.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="142">
@@ -520,22 +553,81 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Vector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="317" selection-start-line="317" selection-end-line="317" />
+          <folding>
+            <element signature="e#11833#11834#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/util/Stack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="100" selection-start-line="100" selection-end-line="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/net/SocketInputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="93" column="23" selection-start-line="93" selection-start-column="23" selection-end-line="93" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="10" column="82" selection-start-line="10" selection-start-column="82" selection-end-line="10" selection-end-column="82" />
+        <state relative-caret-position="296">
+          <caret line="308" column="10" selection-start-line="308" selection-start-column="10" selection-end-line="308" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/lang/NumberFormatException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Java/jdk1.8.0_181/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="614" selection-start-line="614" selection-end-line="614" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="942" column="1" lean-forward="true" selection-start-line="942" selection-start-column="1" selection-end-line="942" selection-end-column="1" />
+        <state relative-caret-position="13">
+          <caret line="1005" column="35" selection-start-line="1005" selection-start-column="35" selection-end-line="1005" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1793#2527#0" />
+            <element signature="e#2532#3668#0" />
+            <element signature="e#3674#5833#0" />
+            <element signature="e#5839#6043#0" />
+            <element signature="e#6048#8106#0" />
+            <element signature="e#8111#8869#0" />
+            <element signature="e#8875#10881#0" />
+            <element signature="e#10887#11233#0" />
+            <element signature="e#11239#12710#0" />
+            <element signature="e#12716#13536#0" />
+            <element signature="e#13542#14462#0" />
+            <element signature="e#14468#15646#0" />
+            <element signature="e#15652#16602#0" />
+            <element signature="e#16608#17002#0" />
+            <element signature="e#17008#17397#0" />
+            <element signature="e#17403#17600#0" />
+            <element signature="e#17606#17979#0" />
+            <element signature="e#17985#18800#0" />
+            <element signature="e#18806#23535#0" />
+            <element signature="e#23541#25424#0" />
+            <element signature="e#25430#28816#0" />
           </folding>
         </state>
       </provider>
