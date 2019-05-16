@@ -1,12 +1,13 @@
 package com.company;
 
-import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
 
 import java.io.*;
 import java.util.*;
 
 public class Parser {
     // -----变量声明部分-----
+    public Vector<itemOfSymbolTable> SymbolTable;
+    public int offset;// 符号表偏移量
     private String file_buffer;
     public Vector<Grammar> G;
     public Vector<String> V,T;
@@ -32,6 +33,8 @@ public class Parser {
     public Stack<Integer> status_Stack; // 状态栈
     public Stack<String> symbol_Stack;  // 符号栈
     public String[] keyword,op;
+    public Stack<itemOfAnalysisStack> analysisStack; // 分析栈
+    public Vector<String> codes;// 最终代码
 
     // -----函数实现部分-----
     public void readfile(String filepath){
@@ -769,36 +772,68 @@ public class Parser {
         }
     }
 
+    public void gen(String code){
+        // 产生代码
+        codes.add(code);
+    }
+
+    public void backpatch(HashSet<Integer> list, int instr){
+        // 回填
+        for (Iterator it = list.iterator();it.hasNext();){
+            int index = (int)it.next(); // 待填写的指令下标
+            String new_code = codes.get(index)+instr;
+            codes.set(index,new_code);
+        }
+    }
+
+    public HashSet<Integer> merge(HashSet<Integer> list1,HashSet<Integer> list2){
+        HashSet<Integer> list3 = new HashSet<>();
+        list3.addAll(list1);
+        list3.addAll(list2);
+        return list3;
+    }
+
     public void do_Analysis(Vector<Token> tokens){
 /*      LR语法分析算法
         输入：1.LR语法分析表ACTION和GOTO
              2.token输入串*/
         int s;
-        Token a;
+        Token token;
         Object action_obj [];
         String type;
 
         // 初始化状态栈和符号栈
-        status_Stack.push(0);
-        symbol_Stack.push("$");
+/*        status_Stack.push(0);
+        symbol_Stack.push("$");*/
+
+        itemOfAnalysisStack item_stack = new itemOfAnalysisStack();
+        item_stack.status=0;
+        item_stack.name="$";
+        analysisStack.push(item_stack);
+
 
         for (int i=0;i<tokens.size();i++){
-            s = status_Stack.peek();// 获得栈顶状态
-            a = tokens.get(i); //获得当前输入的第一个token
+            //s = status_Stack.peek();// 获得栈顶状态
+            s = analysisStack.peek().status;// 获得栈顶状态
+            token = tokens.get(i); //获得当前输入的第一个token
 
             // 处理操作符op
-            if (a.type.equals("op"))
-                type = op[Integer.parseInt(a.value)];
+            if (token.type.equals("op"))
+                type = op[Integer.parseInt(token.value)];
             else
-                type = a.type;
+                type = token.type;
 
             if (ACTION.map.get(s).get(type)!=null){
                 action_obj=ACTION.map.get(s).get(type);
+                itemOfAnalysisStack tmp = new itemOfAnalysisStack();
                 if (action_obj[0].equals("s")){
                     // 移入
-                    status_Stack.push((int)action_obj[1]);
-                    symbol_Stack.push(type);
-                    //System.out.print(i+":"+action_obj[0]+action_obj[1]);
+/*                    status_Stack.push((int)action_obj[1]);
+                    symbol_Stack.push(type);*/
+
+                    tmp.status=(int)action_obj[1];
+                    tmp.name=type;
+                    analysisStack.push(tmp);
 
                 }
                 else if (action_obj[0].equals("r")){
@@ -808,23 +843,109 @@ public class Parser {
 
                     Grammar g = G.get((int)action_obj[1]);// 按产生式g进行归约
 
-                    if (g.right.get(0).equals("~")){
-                        // g形如 D->.~
-                        int next_status = GOTO.map.get(status_Stack.peek()).get(g.left);
-                        status_Stack.push(next_status);
-                        symbol_Stack.push(g.left);
-                    }
-                    else {
+                    if (!g.right.get(0).equals("~")){
                         for (int j=0;j<g.right.size();j++){
-                            symbol_Stack.pop();
-                            status_Stack.pop();
+                            analysisStack.pop();
                         }
-                        symbol_Stack.push(g.left);
-                        int next_status = GOTO.map.get(status_Stack.peek()).get(g.left);
-                        status_Stack.push(next_status);
                     }
+                    int next_status = GOTO.map.get(analysisStack.peek().status).get(g.left);
+                    tmp.status = next_status;
+                    tmp.name = g.left;
 
-                    //System.out.print(i+":"+action_obj[0]+action_obj[1]);
+                    int g_num = (int)action_obj[1];
+                    switch (g_num){
+                        case 0:
+                            // 0:START->P
+                            break;
+                        case 1:
+                            // 1:P->Q1 D S
+                            break;
+                        case 2:
+                            // 2:Q1->~
+                            offset = 0;
+                            break;
+                        case 3:
+                            // 3:D->Lid;Q2D
+                            break;
+                        case 4:
+                            // 4:Q2->~
+
+                            break;
+                        case 5:
+                            // 5:D->~
+                            break;
+                        case 6:
+                            // 6:L->int
+                            break;
+                        case 7:
+                            // 7:L->float
+                            break;
+                        case 8:
+                            // 8:S->id=E;
+                            break;
+                        case 9:
+                            // 9:S->if(C)MSNelseMS
+
+                            break;
+                        case 10:
+                            // 10:S->whileM(C)MS
+                            break;
+                        case 11:
+                            // 11:S->SMS
+                            break;
+                        case 12:
+                            // 12:C->E>E
+                            break;
+                        case 13:
+                            // 13:C->E<E
+                            break;
+                        case 14:
+                            // 14:C->E==E
+                            break;
+                        case 15:
+                            // 15:E->E+T
+                            break;
+                        case 16:
+                            // 16:E->E-T
+                            break;
+                        case 17:
+                            // 17:E->T
+                            break;
+                        case 18:
+                            // 18:T->F
+                            break;
+                        case 19:
+                            // 19:T->T*F
+                            break;
+                        case 20:
+                            // 20:T->T/F
+                            break;
+                        case 21:
+                            // 21:F->(E)
+                            break;
+                        case 22:
+                            // 22:F->id
+                            break;
+                        case 23:
+                            // 23:F->num
+                            break;
+                        case 24:
+                            // 24:M->~
+                            tmp.instr = codes.size();
+                            break;
+                        case 25:
+                            // 25:N->~
+                            tmp.nextlist.add(codes.size());
+                            gen("goto:");
+                            break;
+
+                            default:
+                                break;
+
+                    }// switch
+
+                    analysisStack.push(tmp);
+
                 }
                 else if (action_obj[0].equals("acc")){
                     // 接受
@@ -833,47 +954,21 @@ public class Parser {
                 }
                 else {
                     // 出错处理
-                    System.out.println("[error]:token<"+type+a.value+">");
-                }
-            }
-            else {
-                // 循环当前的LR0项，如果有形如A->a.Db和D->.~的项，则当作GOTO(i,D)=j,跳转到状态j
-                i--;
-                Status I = LRO_items.get(s);
-                for (Iterator it = I.set.iterator();it.hasNext();){
-                    Project p = (Project)it.next();
-                    String nextSymbol = getNextSymbol(p);
-                    if (nextSymbol.equals("~")){
-                        String left = G.get(p.pro_num).left;
-                        symbol_Stack.push(left);
-                        status_Stack.push(GOTO.map.get(s).get(left));
-                    }
+                    System.out.println("[error]:token<"+type+token.value+">");
                 }
             }
 
- /*           // 输出当前栈的状态
-            System.out.print(i+":");
-            Stack<Integer> tmpstack2 = new Stack<>();
-            while(!status_Stack.empty()){
-                int i1  = status_Stack.pop();
-                tmpstack2.push(i1);
-            }
-            while(!tmpstack2.empty()){
-                int i1 = tmpstack2.pop();
-                status_Stack.push(i1);
-                System.out.print(i1+" ");
-            }
-            System.out.print("|");
+            // 输出当前栈的状态
 
-            Stack<String> tmpstack = new Stack<>();
-            while(!symbol_Stack.empty()){
-                String s1  = symbol_Stack.pop();
+/*            Stack<itemOfAnalysisStack> tmpstack = new Stack<>();
+            while(!analysisStack.empty()){
+                itemOfAnalysisStack s1  = analysisStack.pop();
                 tmpstack.push(s1);
             }
             while(!tmpstack.empty()){
-                String s2 = tmpstack.pop();
-                symbol_Stack.push(s2);
-                System.out.print(s2+" ");
+                itemOfAnalysisStack s2 = tmpstack.pop();
+                analysisStack.push(s2);
+                System.out.print(s2.name+" ");
             }
             System.out.println();*/
 
@@ -891,6 +986,8 @@ public class Parser {
         indexToV = new HashMap<>();
         status_Stack = new Stack<>();
         symbol_Stack = new Stack<>();
+        analysisStack = new Stack<>();
+        codes = new Vector<>();
 
         // 分析部分
         Lexer lexer = new Lexer();  // 词法分析
@@ -903,6 +1000,7 @@ public class Parser {
         get_items();                // 生成LR(0)项集族
         get_AnalysisTable();        // 创建ACTION和GOTO分析表
         do_Analysis(lexer.tokens);  // 语法分析
+        //print_G();
         //print_items();
         //output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
         //System.out.println("finish");
@@ -940,4 +1038,30 @@ class Gtable{
     HashMap<Integer,HashMap<String,
             Integer
             >> map;
+}
+
+class itemOfAnalysisStack{
+    int status; // 状态（栈）
+    Token token;// 符号（栈）
+
+    String name;// 操作符op的具体符号
+    String type;// 数据类型
+    int instr;  // 下一条指令位置
+    int val;    // 变量值
+    int width;  // 数据宽度（对于int float）
+
+    HashSet<Integer> truelist,falselist,nextlist;
+
+    public itemOfAnalysisStack(){
+        truelist = new HashSet<>();
+        falselist = new HashSet<>();
+        nextlist = new HashSet<>();
+    }
+}
+
+class itemOfSymbolTable{
+    // 符号表项
+    String name;
+    String type;
+    int offset;
 }
