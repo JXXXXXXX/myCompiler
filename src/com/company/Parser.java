@@ -1,40 +1,32 @@
 package com.company;
 
-
 import java.io.*;
 import java.util.*;
 
 public class Parser {
     // -----变量声明部分-----
-    public Vector<itemOfSymbolTable> SymbolTable;
-    public int offset;// 符号表偏移量
+    public SymbolTable symbolTable; // 符号表
     public int temp_num;// 临时变量个数
-    private String file_buffer;
-    public Vector<Grammar> G;
-    public Vector<String> V,T;
+    public String file_buffer; // 文法txt的输入缓冲
+    public Vector<Grammar> G;   // 文法G
+    public Vector<String> V,T;  // 终结符T和非终结符V
     public HashMap<String, HashSet<String>> FIRST,FOLLOW;
     public Atable ACTION;
     public Gtable GOTO;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
+    public Vector<Status> LRO_items;    // LR(0)项集族
+    public String[] keyword,op;         // 关键词表和符号表
+    public Vector<String> idTable,numTable;// 标识符和常数缓冲
+    public Stack<itemOfAnalysisStack> analysisStack; // 分析栈
+    public Vector<String> codes;// 最终代码
     public static String[]  _V={"START","P","D","S","L","E","C","T","F","Q1","Q2","M","N"},
-                            /*_V={"START","P","D","S","L","E","C","T","F"},*/
                             _T={"id","int","float","if","else","while","num", ";",">","<",
                                     "==","=","+","-","*","/","(",")","~"},
                             _VT={"START","P","D","S","L","E","C","T","F","Q1","Q2","M","N",
                                     "id","int","float","if","else","while","num", ";",">",
                                     "<","==","=","+","-","*","/","(",")","~"};
-/*                            _VT={"START","P","D","S","L","E","C","T","F",
-                                    "id","int","float","if","else","while","num", ";",">",
-                                    "<","==","=","+","-","*","/","(",")","~"};*/
 
-    /*    public static String[]  _V2={"START","P","T","F"},
-                            _T2={"id","+","*","(",")"},
-                            _VT2={"START","P","T","F","id","+","*","(",")"};*/
-    public Vector<Status> LRO_items; // LR(0)项集族
-    public String[] keyword,op;
-    public Vector<String> idTable,numTable;//
-    public Stack<itemOfAnalysisStack> analysisStack; // 分析栈
-    public Vector<String> codes;// 最终代码
+
 
     // -----函数实现部分-----
     public void readfile(String filepath){
@@ -844,9 +836,6 @@ public class Parser {
         String type;
 
         // 初始化状态栈和符号栈
-/*        status_Stack.push(0);
-        symbol_Stack.push("$");*/
-
         itemOfAnalysisStack item_stack = new itemOfAnalysisStack();
         item_stack.status=0;
         item_stack.symbol="$";
@@ -854,7 +843,6 @@ public class Parser {
 
 
         for (int i=0;i<tokens.size();i++){
-            //s = status_Stack.peek();// 获得栈顶状态
             s = analysisStack.peek().status;// 获得栈顶状态
             token = tokens.get(i); //获得当前输入的第一个token
 
@@ -870,8 +858,6 @@ public class Parser {
 
                 if (action_obj[0].equals("s")){
                     // 移入
-/*                    status_Stack.push((int)action_obj[1]);
-                    symbol_Stack.push(type);*/
 
                     tmp.status=(int)action_obj[1];
                     tmp.symbol=type;
@@ -906,11 +892,23 @@ public class Parser {
                             break;
                         case 2:
                             // 2:Q1->~
-                            offset = 0; // 符号表offset初始化
+                            symbolTable.offset=0;
                             break;
-                        case 3:
-                            // 3:D->Lid;Q2D
+                        case 3:{
+                            // 3:D->L id ; Q2 D
+                            itemOfAnalysisStack L=right_tmp.get(4);
+                            itemOfAnalysisStack id=right_tmp.get(3);
+                            itemOfSymbolTable new_item = new itemOfSymbolTable();// 创建新的符号表项
+                            String id_name = idTable.get(Integer.parseInt(id.token.value));
+                            new_item.name = id_name;
+                            new_item.offset = symbolTable.offset;
+                            new_item.type = (String) L.val;
+
+                            symbolTable.table.add(new_item);
+                            symbolTable.offset+=L.width;
+
                             break;
+                        }
                         case 4:
                             // 4:Q2->~
                             break;
@@ -921,7 +919,7 @@ public class Parser {
                             // 6:L->int
                         case 7:
                             // 7:L->float
-                            tmp.symbol=right_tmp.get(0).symbol;
+                            tmp.val=right_tmp.get(0).symbol;
                             tmp.width=4;
                             break;
                         case 8:{
@@ -933,6 +931,14 @@ public class Parser {
                             int index_idTable = Integer.parseInt(id.token.value);
                             id_val = idTable.get(index_idTable);
                             gen(id_val+"="+E.val);
+                            // 填写符号表
+                            for (int k =0;k<symbolTable.table.size();k++){
+                                if (symbolTable.table.get(k).name.equals(id_val)){
+                                    symbolTable.table.get(k).val=E.val;
+                                    break;
+                                }
+                            }
+
                             break;
                         }
                         case 9:{
@@ -1094,6 +1100,7 @@ public class Parser {
         analysisStack = new Stack<>();
         codes = new Vector<>();
         temp_num = 0;
+        symbolTable = new SymbolTable();
 
         // 分析部分
         Lexer lexer = new Lexer();  // 词法分析
@@ -1110,6 +1117,7 @@ public class Parser {
         do_Analysis(lexer.tokens);  // 语法分析
 
         print_codes();
+        symbolTable.output();
         //print_G();
         //print_items();
         //output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
@@ -1155,7 +1163,7 @@ class itemOfAnalysisStack{
     Token token;    // 符号（栈）
     String symbol;  // 操作符op的具体符号
     int instr;      // 下一条指令位置
-    String val;        // 变量值
+    Object val;     // 变量值
     int width;      // 数据宽度（对于int float）
 
     HashSet<Integer> truelist,falselist,nextlist;
@@ -1171,5 +1179,27 @@ class itemOfSymbolTable{
     // 符号表项
     String name;
     String type;
+    Object val; // 适应不同类型(type)变量的值（比如float或int
     int offset;
+}
+
+class SymbolTable{
+    int offset;
+    Vector<itemOfSymbolTable> table;
+
+    public SymbolTable(){
+        offset=0;
+        table=new Vector<>();
+    }
+
+    public void output(){
+        System.out.println("---------符号表---------");
+        for (int i=0;i<table.size();i++){
+            System.out.println("["+i+"]");
+            System.out.println("    name:"+table.get(i).name);
+            System.out.println("    type:"+table.get(i).type);
+            System.out.println("    val:"+table.get(i).val);
+            System.out.println("    offset:"+table.get(i).offset);
+        }
+    }
 }
