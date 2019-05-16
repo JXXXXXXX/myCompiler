@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Parser.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -24,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="207" column="46" selection-start-line="207" selection-start-column="46" selection-end-line="207" selection-end-column="46" />
+            <state relative-caret-position="216">
+              <caret line="10" column="82" selection-start-line="10" selection-start-column="82" selection-end-line="10" selection-end-column="82" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -36,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="856" column="2" selection-start-line="856" selection-end-line="865" selection-end-column="41" />
+            <state relative-caret-position="512">
+              <caret line="942" column="1" lean-forward="true" selection-start-line="942" selection-start-column="1" selection-end-line="942" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -109,47 +108,23 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/com/company/Main.java" />
-        <option value="$PROJECT_DIR$/src/com/company/Parser.java" />
         <option value="$PROJECT_DIR$/src/com/company/Lexer.java" />
+        <option value="$PROJECT_DIR$/src/com/company/Parser.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="951" />
-    <option name="width" value="978" />
-    <option name="height" value="1039" />
+    <option name="x" value="590" />
+    <option name="y" value="73" />
+    <option name="width" value="980" />
+    <option name="height" value="1040" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="company" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -221,7 +196,9 @@
       <workItem from="1557831659768" duration="9553000" />
       <workItem from="1557842642241" duration="3150000" />
       <workItem from="1557901093707" duration="10617000" />
-      <workItem from="1557919630394" duration="3914000" />
+      <workItem from="1557919630394" duration="9931000" />
+      <workItem from="1557930190022" duration="988000" />
+      <workItem from="1557967664348" duration="734000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -363,11 +340,25 @@
       <option name="project" value="LOCAL" />
       <updated>1557912130507</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="解决词法分析器里syn序号错误的问题。">
+      <created>1557923818756</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1557923818757</updated>
+    </task>
+    <task id="LOCAL-00022" summary="完成语法分析。">
+      <created>1557929611854</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1557929611854</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105627000" />
+    <option name="totallyTimeSpent" value="113366000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -391,8 +382,8 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.50708216" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.46175638" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49865952" weight="0.84560907" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.51983005" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3286119" />
@@ -476,25 +467,18 @@
     <MESSAGE value="完成ACTION和GOTO分析表的构造" />
     <MESSAGE value="1.向词法分析器的keyword表中添加了int/float。&#10;2.input/code.txt中存放的是待分析的文法。" />
     <MESSAGE value="1.LR分析算法还有问题;&#10;2.写了个分析表输出函数，输出结果在output/AnalysisTable.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.LR分析算法还有问题;&#10;2.写了个分析表输出函数，输出结果在output/AnalysisTable.md" />
+    <MESSAGE value="解决词法分析器里syn序号错误的问题。" />
+    <MESSAGE value="完成语法分析。" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成语法分析。" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/company/Parser.java</url>
-          <line>774</line>
-          <properties />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="this" />
         <watch expression="it" />
         <watch expression="ACTION.map.entrySet().toArray()[11]" language="JAVA" />
         <watch expression="ACTION.map.entrySet().toArray()[11]" language="JAVA" />
+        <watch expression="status_Stack" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>
@@ -536,20 +520,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
+    <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="856" column="2" selection-start-line="856" selection-end-line="865" selection-end-column="41" />
+        <state relative-caret-position="216">
+          <caret line="10" column="82" selection-start-line="10" selection-start-column="82" selection-end-line="10" selection-end-column="82" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
+    <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="207" column="46" selection-start-line="207" selection-start-column="46" selection-end-line="207" selection-end-column="46" />
+        <state relative-caret-position="512">
+          <caret line="942" column="1" lean-forward="true" selection-start-line="942" selection-start-column="1" selection-end-line="942" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

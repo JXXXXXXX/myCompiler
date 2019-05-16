@@ -1,0 +1,26 @@
+P ->Q1 D S
+Q1->~
+D ->L id;Q2 D 
+Q2->~
+D ->~
+L -> int  
+L ->float
+S -> id = E;
+S -> if (C)  M S N  else M  S
+S -> while M (C) M S  
+S -> S M S
+C -> E > E
+C -> E < E
+C -> E == E
+E -> E + T
+E -> E-T
+E -> T
+T -> F
+T -> T * F
+T -> T / F
+F -> ( E )
+F -> id
+F -> num
+M->~
+N->~
+$

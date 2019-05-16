@@ -14,10 +14,18 @@ public class Parser {
     public Atable ACTION;
     public Gtable GOTO;
     public HashMap<String,HashSet<Integer>>indexToV;// HashSet是非终结符号的定义式（有若干个）
-    public static String[]  _V={"START","P","D","S","L","E","C","T","F"},
-                            _T={"id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"},
-                            _VT={"START","P","D","S","L","E","C","T","F","id","int","float","if","else","while","num", ";",">","<","==","=","+","-","*","/","(",")","~"};
-/*    public static String[]  _V2={"START","P","T","F"},
+    public static String[]  _V={"START","P","D","S","L","E","C","T","F","Q1","Q2","M","N"},
+                            /*_V={"START","P","D","S","L","E","C","T","F"},*/
+                            _T={"id","int","float","if","else","while","num", ";",">","<",
+                                    "==","=","+","-","*","/","(",")","~"},
+                            _VT={"START","P","D","S","L","E","C","T","F","Q1","Q2","M","N",
+                                    "id","int","float","if","else","while","num", ";",">",
+                                    "<","==","=","+","-","*","/","(",")","~"};
+/*                            _VT={"START","P","D","S","L","E","C","T","F",
+                                    "id","int","float","if","else","while","num", ";",">",
+                                    "<","==","=","+","-","*","/","(",")","~"};*/
+
+    /*    public static String[]  _V2={"START","P","T","F"},
                             _T2={"id","+","*","(",")"},
                             _VT2={"START","P","T","F","id","+","*","(",")"};*/
     public Vector<Status> LRO_items; // LR(0)项集族
@@ -96,7 +104,8 @@ public class Parser {
         }
 
         // 2. 读文件
-        String filepath = "input/Grammar.txt";
+        /*String filepath = "input/Grammar.txt";*/
+        String filepath = "input/Grammar_new.txt";
         readfile(filepath);
         // 3.增广文法
         Grammar g0 = new Grammar();
@@ -674,9 +683,11 @@ public class Parser {
         }
     }
 
-    public void output_AnalysisTable(){
+    public void output_AnalysisTable(String filename){
         try {
-            File writeName = new File("output/AnalysisTable.md");
+            String filepath = "output/";
+            filepath = filepath+filename;
+            File writeName = new File(filepath);
             writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
             try (FileWriter writer = new FileWriter(writeName);
                  BufferedWriter out = new BufferedWriter(writer)
@@ -840,7 +851,7 @@ public class Parser {
                 }
             }
 
-/*            // 输出当前栈的状态
+ /*           // 输出当前栈的状态
             System.out.print(i+":");
             Stack<Integer> tmpstack2 = new Stack<>();
             while(!status_Stack.empty()){
@@ -881,19 +892,19 @@ public class Parser {
         status_Stack = new Stack<>();
         symbol_Stack = new Stack<>();
 
-        Lexer lexer = new Lexer();
+        // 分析部分
+        Lexer lexer = new Lexer();  // 词法分析
         keyword = lexer.keyword;
         op = lexer.op;
 
-        get_garmmer();  //从文件读入文法符号
-        get_first();    //获得FIRST集
-        get_follow();   //获得FOLLOW集
-        get_items(); // 生成LR(0)项集族
+        get_garmmer();              // 从文件读入文法符号
+        get_first();                // 获得FIRST集
+        get_follow();               // 获得FOLLOW集
+        get_items();                // 生成LR(0)项集族
+        get_AnalysisTable();        // 创建ACTION和GOTO分析表
+        do_Analysis(lexer.tokens);  // 语法分析
         //print_items();
-        get_AnalysisTable();
-
-        //output_AnalysisTable();
-        do_Analysis(lexer.tokens);
+        //output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
         //System.out.println("finish");
     }
 }
