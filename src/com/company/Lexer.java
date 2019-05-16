@@ -302,7 +302,6 @@ public class Lexer {
         {
 
             System.out.println("error: no exist Lexer:"+input_code.charAt(index));
-            System.exit(0);
         }
         return token;
     }
@@ -315,17 +314,17 @@ public class Lexer {
         idTable = new Vector<>();
         numTable = new Vector<>();
 
-        System.out.println("----------------编译小程序----------------");
-        System.out.println("    请选择源代码输入方式:");
-        System.out.println("    按1:读取/input目录下code.txt文件;");
-        System.out.println("    按2:用户通过命令行界面输入源程序;");
-        System.out.println("    按其他任意键退出;");
-        System.out.println("-----------------------------------------");
-        System.out.print(  "    请输入:");
+        System.out.println("------------编译小程序------------");
+        System.out.println("请选择源代码输入方式:");
+        System.out.println("按1:读取/input目录下code.txt文件;");
+        System.out.println("按2:用户通过命令行界面输入源程序;");
+        System.out.println("按其他任意键退出;");
+        System.out.println("---------------------------------");
+        System.out.print(  "请输入:");
         Scanner sc = new Scanner(System.in);
         String input_str = sc.next();
         if (input_str.equals("2")){
-            System.out.println("    输入$和回车结束输入;");
+            System.out.println("输入$和回车结束输入;");
             sc.reset();
             input_str="";
             while (input_str.indexOf("$")==-1){

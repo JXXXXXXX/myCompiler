@@ -974,7 +974,7 @@ public class Parser {
                             out_line=out_line+s+num+"|";
                         }
                         else {
-                            out_line=out_line+"null|";
+                            out_line=out_line+" |";
                         }
                     }
                     // 额外判断一列'$'
@@ -984,7 +984,7 @@ public class Parser {
                         out_line=out_line+s+num+"|";
                     }
                     else {
-                        out_line=out_line+"null|";
+                        out_line=out_line+" |";
                     }
                     out_line=out_line+"\r\n";
                     out.write(out_line);// 输出表的内容(每行)
@@ -1013,7 +1013,7 @@ public class Parser {
                             out_line=out_line+num+"|";
                         }
                         else {
-                            out_line=out_line+"null|";
+                            out_line=out_line+" |";
                         }
                     }
                     out_line=out_line+"\r\n";
@@ -1074,16 +1074,17 @@ public class Parser {
             output_Items("items.md");
             output_AnalysisTable("AnalysisTable.md");
 
-            System.out.println("-----------------------------------------");
-            System.out.println("    是否继续?");
-            System.out.println("    按1重新执行分析程序;");
-            System.out.println("    按其他任意键退出;");
+            System.out.println("--------------------------------");
+            System.out.println("是否继续?");
+            System.out.println("按1重新执行分析程序;");
+            System.out.println("按其他任意键退出;");
             scanner.reset();
             input_str = scanner.next();
             if (input_str.equals("1")){
                 flag=true;
             }
         }
+        System.out.println("退出程序");
         System.exit(0);
 
     }

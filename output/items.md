@@ -6,9 +6,9 @@
 
 |left|right|
 |---|---|
+|START|. P |
 |P|. Q1 D S |
 |Q1|. ~ |
-|START|. P |
 #### I(1)
 
 |left|right|
@@ -18,20 +18,20 @@
 
 |left|right|
 |---|---|
-|D|. L id ; Q2 D |
-|L|. float |
-|P|Q1 . D S |
-|D|. ~ |
 |L|. int |
+|P|Q1 . D S |
+|D|. L id ; Q2 D |
+|D|. ~ |
+|L|. float |
 #### I(3)
 
 |left|right|
 |---|---|
-|P|Q1 D . S |
-|S|. S M S |
+|S|. if ( C ) M S N else M S |
 |S|. id = E ; |
 |S|. while M ( C ) M S |
-|S|. if ( C ) M S N else M S |
+|P|Q1 D . S |
+|S|. S M S |
 #### I(4)
 
 |left|right|
@@ -51,9 +51,9 @@
 
 |left|right|
 |---|---|
-|S|S . M S |
-|M|. ~ |
 |P|Q1 D S . |
+|M|. ~ |
+|S|S . M S |
 #### I(8)
 
 |left|right|
@@ -79,60 +79,60 @@
 
 |left|right|
 |---|---|
-|S|S M . S |
 |S|. id = E ; |
-|S|. S M S |
 |S|. if ( C ) M S N else M S |
 |S|. while M ( C ) M S |
+|S|S M . S |
+|S|. S M S |
 #### I(13)
 
 |left|right|
 |---|---|
-|F|. ( E ) |
 |F|. num |
-|E|. E - T |
 |E|. E + T |
+|T|. T * F |
+|E|. E - T |
+|E|. T |
+|T|. T / F |
+|F|. ( E ) |
 |F|. id |
 |S|id = . E ; |
 |T|. F |
-|T|. T * F |
-|T|. T / F |
-|E|. T |
 #### I(14)
 
 |left|right|
 |---|---|
-|T|. T * F |
-|T|. T * F |
-|E|. T |
-|C|. E == E |
-|F|. num |
-|T|. T * F |
-|E|. E + T |
-|C|. E < E |
-|F|. id |
-|F|. id |
-|C|. E > E |
-|T|. T / F |
-|E|. T |
-|T|. T / F |
-|F|. num |
-|F|. id |
-|E|. E + T |
+|F|. ( E ) |
 |T|. F |
 |E|. E - T |
 |E|. T |
-|T|. T / F |
+|F|. id |
+|T|. F |
+|E|. T |
+|E|. E - T |
 |F|. ( E ) |
+|C|. E == E |
+|T|. T * F |
+|T|. F |
+|T|. T * F |
+|F|. ( E ) |
+|C|. E > E |
+|T|. T * F |
+|T|. T / F |
+|E|. E + T |
+|E|. E - T |
+|F|. id |
+|F|. num |
+|C|. E < E |
+|E|. T |
+|T|. T / F |
+|T|. T / F |
+|E|. E + T |
+|F|. num |
 |S|if ( . C ) M S N else M S |
 |E|. E + T |
-|T|. F |
-|T|. F |
-|E|. E - T |
-|F|. ( E ) |
-|E|. E - T |
-|F|. ( E ) |
 |F|. num |
+|F|. id |
 #### I(15)
 
 |left|right|
@@ -142,15 +142,15 @@
 
 |left|right|
 |---|---|
-|Q2|. ~ |
 |D|L id ; . Q2 D |
+|Q2|. ~ |
 #### I(17)
 
 |left|right|
 |---|---|
-|S|S M S . |
-|M|. ~ |
 |S|S . M S |
+|M|. ~ |
+|S|S M S . |
 #### I(18)
 
 |left|right|
@@ -162,9 +162,9 @@
 
 |left|right|
 |---|---|
+|T|T . / F |
 |T|T . * F |
 |E|T . |
-|T|T . / F |
 #### I(20)
 
 |left|right|
@@ -184,28 +184,28 @@
 
 |left|right|
 |---|---|
-|T|. F |
-|F|. ( E ) |
-|F|. num |
-|E|. E - T |
-|E|. T |
-|F|( . E ) |
-|E|. E + T |
-|T|. T * F |
 |T|. T / F |
+|E|. E - T |
+|F|. num |
+|E|. E + T |
+|T|. F |
+|E|. T |
+|T|. T * F |
+|F|. ( E ) |
+|F|( . E ) |
 |F|. id |
 #### I(24)
 
 |left|right|
 |---|---|
 |E|E . - T |
-|C|E . > E |
-|E|E . + T |
 |C|E . < E |
 |E|E . + T |
 |E|E . - T |
+|C|E . > E |
 |E|E . + T |
 |C|E . == E |
+|E|E . + T |
 |E|E . - T |
 #### I(25)
 
@@ -216,15 +216,15 @@
 
 |left|right|
 |---|---|
-|E|T . |
-|T|T . * F |
-|E|T . |
-|T|T . / F |
-|T|T . / F |
-|T|T . / F |
 |T|T . * F |
 |T|T . * F |
 |E|T . |
+|T|T . / F |
+|E|T . |
+|E|T . |
+|T|T . / F |
+|T|T . * F |
+|T|T . / F |
 #### I(27)
 
 |left|right|
@@ -250,79 +250,79 @@
 
 |left|right|
 |---|---|
-|F|( . E ) |
-|E|. T |
-|T|. T * F |
-|E|. E + T |
-|E|. T |
-|E|. E + T |
+|E|. E - T |
 |T|. F |
-|F|. id |
+|T|. F |
+|E|. T |
 |E|. E - T |
-|E|. E - T |
+|E|. T |
+|T|. T / F |
+|F|. ( E ) |
+|E|. E + T |
+|E|. E + T |
+|F|. ( E ) |
 |T|. T * F |
+|T|. T * F |
+|T|. F |
+|E|. E - T |
+|F|. num |
+|F|. num |
+|F|( . E ) |
 |T|. T / F |
 |T|. T / F |
 |F|. id |
-|T|. T * F |
-|E|. T |
-|F|. ( E ) |
-|F|. ( E ) |
 |F|( . E ) |
-|T|. F |
-|F|. num |
-|T|. F |
-|F|. num |
-|T|. T / F |
-|F|. num |
+|F|. id |
 |F|. id |
 |F|. ( E ) |
-|E|. E - T |
-|E|. E + T |
+|F|. num |
 |F|( . E ) |
+|E|. E + T |
+|T|. T * F |
+|E|. T |
 #### I(31)
 
 |left|right|
 |---|---|
-|F|. id |
-|T|. F |
 |F|. ( E ) |
+|T|. T / F |
+|F|. num |
+|T|. T / F |
+|E|. E + T |
 |T|. F |
 |E|. E - T |
-|T|. T * F |
-|C|. E < E |
-|C|. E > E |
-|T|. T / F |
-|E|. E + T |
-|E|. E + T |
-|T|. T / F |
-|F|. num |
-|E|. T |
-|T|. T / F |
-|T|. T * F |
-|F|. num |
-|E|. T |
 |C|. E == E |
-|S|while M ( . C ) M S |
-|T|. F |
-|E|. E + T |
 |F|. id |
+|E|. T |
+|T|. T * F |
 |T|. T * F |
 |F|. id |
+|S|while M ( . C ) M S |
 |E|. E - T |
+|T|. T * F |
 |F|. ( E ) |
-|F|. num |
+|F|. id |
+|T|. F |
 |E|. T |
-|E|. E - T |
+|C|. E < E |
+|T|. T / F |
+|C|. E > E |
+|E|. T |
+|T|. F |
 |F|. ( E ) |
+|E|. E + T |
+|F|. num |
+|E|. E - T |
+|E|. E + T |
+|F|. num |
 #### I(32)
 
 |left|right|
 |---|---|
-|D|L id ; Q2 . D |
 |D|. ~ |
-|L|. float |
+|D|L id ; Q2 . D |
 |D|. L id ; Q2 D |
+|L|. float |
 |L|. int |
 #### I(33)
 
@@ -333,138 +333,138 @@
 
 |left|right|
 |---|---|
-|F|. num |
-|T|. T * F |
-|T|. T / F |
-|T|. F |
 |F|. ( E ) |
-|E|E + . T |
+|T|. F |
 |F|. id |
+|T|. T / F |
+|F|. num |
+|E|E + . T |
+|T|. T * F |
 #### I(35)
 
 |left|right|
 |---|---|
 |T|. F |
-|F|. ( E ) |
-|T|. T * F |
 |T|. T / F |
-|E|E - . T |
 |F|. num |
+|F|. ( E ) |
 |F|. id |
+|T|. T * F |
+|E|E - . T |
 #### I(36)
 
 |left|right|
 |---|---|
 |F|. ( E ) |
 |F|. num |
-|F|. id |
 |T|T * . F |
+|F|. id |
 #### I(37)
 
 |left|right|
 |---|---|
-|F|. ( E ) |
-|F|. id |
 |F|. num |
+|F|. ( E ) |
 |T|T / . F |
+|F|. id |
 #### I(38)
 
 |left|right|
 |---|---|
-|E|E . + T |
 |F|( E . ) |
 |E|E . - T |
+|E|E . + T |
 #### I(39)
 
 |left|right|
 |---|---|
-|T|. T * F |
-|F|. ( E ) |
-|T|. F |
-|C|E > . E |
 |E|. E - T |
-|T|. T / F |
-|F|. id |
-|E|. T |
+|F|. ( E ) |
 |F|. num |
+|C|E > . E |
+|T|. T / F |
+|E|. T |
 |E|. E + T |
+|F|. id |
+|T|. F |
+|T|. T * F |
 #### I(40)
 
 |left|right|
 |---|---|
+|T|. T / F |
 |T|. F |
 |E|. T |
-|F|. id |
 |C|E < . E |
-|F|. num |
-|E|. E + T |
+|E|. E - T |
 |T|. T * F |
 |F|. ( E ) |
-|E|. E - T |
-|T|. T / F |
+|F|. num |
+|E|. E + T |
+|F|. id |
 #### I(41)
 
 |left|right|
 |---|---|
-|T|. T * F |
+|F|. ( E ) |
 |C|E == . E |
+|E|. T |
+|E|. E - T |
+|T|. T * F |
+|F|. id |
 |F|. num |
 |E|. E + T |
-|T|. T / F |
-|F|. ( E ) |
-|E|. E - T |
-|E|. T |
-|F|. id |
 |T|. F |
+|T|. T / F |
 #### I(42)
 
 |left|right|
 |---|---|
-|T|. T * F |
-|F|. num |
-|T|. T / F |
-|T|. F |
-|F|. ( E ) |
-|F|. ( E ) |
-|F|. num |
-|E|E + . T |
-|E|E + . T |
-|E|E + . T |
-|F|. id |
-|T|. T / F |
-|F|. id |
-|T|. F |
-|T|. T * F |
-|F|. ( E ) |
-|T|. T * F |
-|F|. num |
 |T|. F |
 |F|. id |
 |T|. T / F |
+|F|. num |
+|E|E + . T |
+|F|. num |
+|F|. id |
+|T|. F |
+|E|E + . T |
+|T|. T * F |
+|E|E + . T |
+|T|. T * F |
+|F|. ( E ) |
+|T|. T / F |
+|T|. F |
+|F|. num |
+|F|. ( E ) |
+|F|. id |
+|T|. T / F |
+|F|. ( E ) |
+|T|. T * F |
 #### I(43)
 
 |left|right|
 |---|---|
-|F|. num |
-|T|. T * F |
-|T|. T / F |
-|F|. ( E ) |
-|T|. T / F |
-|T|. T * F |
+|E|E - . T |
 |T|. F |
 |F|. id |
-|F|. id |
-|F|. ( E ) |
+|F|. num |
+|T|. T * F |
 |F|. ( E ) |
 |T|. T / F |
+|F|. ( E ) |
+|F|. ( E ) |
+|F|. num |
+|F|. num |
+|E|E - . T |
 |T|. T * F |
-|E|E - . T |
 |T|. F |
+|T|. T * F |
+|T|. T / F |
 |E|E - . T |
-|F|. num |
-|E|E - . T |
+|F|. id |
 |T|. F |
-|F|. num |
+|T|. T / F |
 |F|. id |
 #### I(44)
 
@@ -476,47 +476,47 @@
 
 |left|right|
 |---|---|
-|F|. num |
+|T|T * . F |
 |F|. id |
 |T|T * . F |
-|F|. ( E ) |
-|T|T * . F |
-|F|. ( E ) |
 |F|. id |
 |F|. num |
-|F|. id |
+|T|T * . F |
 |F|. num |
 |F|. ( E ) |
-|T|T * . F |
+|F|. id |
+|F|. ( E ) |
+|F|. num |
+|F|. ( E ) |
 #### I(46)
 
 |left|right|
 |---|---|
+|F|. num |
+|F|. num |
 |F|. ( E ) |
+|T|T / . F |
 |F|. ( E ) |
 |F|. num |
-|T|T / . F |
 |F|. id |
 |F|. ( E ) |
-|F|. num |
-|F|. id |
-|F|. num |
 |F|. id |
 |T|T / . F |
 |T|T / . F |
+|F|. id |
 #### I(47)
 
 |left|right|
 |---|---|
-|F|( E . ) |
-|E|E . + T |
-|E|E . + T |
-|F|( E . ) |
 |E|E . - T |
-|E|E . - T |
+|E|E . + T |
+|F|( E . ) |
 |F|( E . ) |
 |E|E . + T |
 |E|E . - T |
+|E|E . + T |
+|E|E . - T |
+|F|( E . ) |
 #### I(48)
 
 |left|right|
@@ -531,16 +531,16 @@
 
 |left|right|
 |---|---|
+|T|T . / F |
 |T|T . * F |
 |E|E + T . |
-|T|T . / F |
 #### I(51)
 
 |left|right|
 |---|---|
-|T|T . / F |
 |T|T . * F |
 |E|E - T . |
+|T|T . / F |
 #### I(52)
 
 |left|right|
@@ -560,58 +560,58 @@
 
 |left|right|
 |---|---|
-|C|E > E . |
 |E|E . - T |
 |E|E . + T |
+|C|E > E . |
 #### I(56)
 
 |left|right|
 |---|---|
-|E|E . + T |
 |C|E < E . |
 |E|E . - T |
+|E|E . + T |
 #### I(57)
 
 |left|right|
 |---|---|
+|C|E == E . |
 |E|E . - T |
 |E|E . + T |
-|C|E == E . |
 #### I(58)
 
 |left|right|
 |---|---|
 |E|E + T . |
+|T|T . * F |
+|T|T . / F |
 |E|E + T . |
-|T|T . / F |
+|T|T . * F |
 |T|T . * F |
 |T|T . / F |
-|T|T . * F |
+|T|T . / F |
 |E|E + T . |
-|T|T . / F |
-|T|T . * F |
 #### I(59)
 
 |left|right|
 |---|---|
-|E|E - T . |
 |T|T . / F |
+|E|E - T . |
+|E|E - T . |
+|E|E - T . |
+|T|T . * F |
 |T|T . / F |
 |T|T . * F |
 |T|T . * F |
 |T|T . / F |
-|T|T . * F |
-|E|E - T . |
-|E|E - T . |
 #### I(60)
 
 |left|right|
 |---|---|
-|S|if ( C ) M . S N else M S |
-|S|. id = E ; |
 |S|. if ( C ) M S N else M S |
 |S|. while M ( C ) M S |
 |S|. S M S |
+|S|if ( C ) M . S N else M S |
+|S|. id = E ; |
 #### I(61)
 
 |left|right|
@@ -637,25 +637,25 @@
 
 |left|right|
 |---|---|
-|S|while M ( C ) . M S |
 |M|. ~ |
+|S|while M ( C ) . M S |
 #### I(65)
 
 |left|right|
 |---|---|
-|M|. ~ |
 |S|if ( C ) M S . N else M S |
-|S|S . M S |
 |N|. ~ |
+|S|S . M S |
+|M|. ~ |
 #### I(66)
 
 |left|right|
 |---|---|
-|S|. while M ( C ) M S |
+|S|. if ( C ) M S N else M S |
 |S|while M ( C ) M . S |
+|S|. while M ( C ) M S |
 |S|. S M S |
 |S|. id = E ; |
-|S|. if ( C ) M S N else M S |
 #### I(67)
 
 |left|right|
@@ -665,24 +665,24 @@
 
 |left|right|
 |---|---|
-|M|. ~ |
 |S|while M ( C ) M S . |
+|M|. ~ |
 |S|S . M S |
 #### I(69)
 
 |left|right|
 |---|---|
-|M|. ~ |
 |S|if ( C ) M S N else . M S |
+|M|. ~ |
 #### I(70)
 
 |left|right|
 |---|---|
+|S|. while M ( C ) M S |
 |S|. id = E ; |
 |S|. S M S |
-|S|. if ( C ) M S N else M S |
-|S|. while M ( C ) M S |
 |S|if ( C ) M S N else M . S |
+|S|. if ( C ) M S N else M S |
 #### I(71)
 
 |left|right|

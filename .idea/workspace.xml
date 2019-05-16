@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="以文件的形式输出结果，结果保存在output目录下。">
+    <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/AnalysisTable.md" beforeDir="false" afterPath="$PROJECT_DIR$/output/AnalysisTable.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/AnalysisTable_new.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/items.md" beforeDir="false" afterPath="$PROJECT_DIR$/output/items.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Parser.java" afterDir="false" />
     </list>
@@ -30,11 +30,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="322" column="8" selection-start-line="322" selection-start-column="8" selection-end-line="322" selection-end-column="72" />
+            <state relative-caret-position="272">
+              <caret line="303" column="82" selection-start-line="303" selection-start-column="82" selection-end-line="303" selection-end-column="82" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#output_tokens#0;class#Lexer#0" />
@@ -43,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="43">
-              <caret line="1076" column="76" selection-start-line="1076" selection-start-column="76" selection-end-line="1076" selection-end-column="76" />
+              <caret line="1056" column="12" selection-start-line="1056" selection-start-column="12" selection-end-line="1056" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1793#2527#0" />
@@ -70,11 +70,11 @@
                 <element signature="e#29200#29413#0" />
                 <element signature="e#29466#29578#0" />
                 <element signature="e#29662#29721#0" />
+                <element signature="e#29894#40327#0" />
                 <element signature="e#31863#39336#0" />
                 <element signature="e#38870#38970#0" />
                 <element signature="e#40592#43282#0" />
                 <element signature="e#40592#42086#0" />
-                <element signature="e#39333#42731#0" />
               </folding>
             </state>
           </provider>
@@ -191,7 +191,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1558009939766" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1558010733559" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
@@ -261,7 +261,7 @@
       <workItem from="1557919630394" duration="9931000" />
       <workItem from="1557930190022" duration="988000" />
       <workItem from="1557967664348" duration="9237000" />
-      <workItem from="1557979133747" duration="28643000" />
+      <workItem from="1557979133747" duration="29923000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -452,11 +452,18 @@
       <option name="project" value="LOCAL" />
       <updated>1557999237465</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="添加了命令行功能选择界面。">
+      <created>1558009980267</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1558009980267</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="150512000" />
+    <option name="totallyTimeSpent" value="151792000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -469,6 +476,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.30093834" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -570,7 +578,8 @@
     <MESSAGE value="1.完成中间代码生成。&#10;PS:能够完成实验给出的代码分析，不排除其他代码测试会出错的可能= =" />
     <MESSAGE value="针对符号表的生成进行修改" />
     <MESSAGE value="测试GitHub网页端的markdown显示效果。" />
-    <option name="LAST_COMMIT_MESSAGE" value="测试GitHub网页端的markdown显示效果。" />
+    <MESSAGE value="添加了命令行功能选择界面。" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加了命令行功能选择界面。" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -666,21 +675,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="322" column="8" selection-start-line="322" selection-start-column="8" selection-end-line="322" selection-end-column="72" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#output_tokens#0;class#Lexer#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="43">
-          <caret line="1076" column="76" selection-start-line="1076" selection-start-column="76" selection-end-line="1076" selection-end-column="76" />
+          <caret line="1056" column="12" selection-start-line="1056" selection-start-column="12" selection-end-line="1056" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1793#2527#0" />
@@ -703,11 +701,22 @@
             <element signature="e#29200#29413#0" />
             <element signature="e#29466#29578#0" />
             <element signature="e#29662#29721#0" />
+            <element signature="e#29894#40327#0" />
             <element signature="e#31863#39336#0" />
             <element signature="e#38870#38970#0" />
             <element signature="e#40592#43282#0" />
             <element signature="e#40592#42086#0" />
-            <element signature="e#39333#42731#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="303" column="82" selection-start-line="303" selection-start-column="82" selection-end-line="303" selection-end-column="82" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#output_tokens#0;class#Lexer#0" />
           </folding>
         </state>
       </provider>
