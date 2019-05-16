@@ -50,6 +50,7 @@ public class Parser {
             System.exit(0);
         }
     }
+
     public String getNextSymbol(String str,int index){
         // 在字符串str里的index处向后，找第一个匹配的文法V或T
         while(str.charAt(index)==' '){
@@ -168,6 +169,7 @@ public class Parser {
         }
         return false;
     }
+
     public void get_first(){
         // 初始化 FIRST
         for(int i=0;i<V.size();i++){
@@ -223,6 +225,7 @@ public class Parser {
 
         FIRST.remove("START");
     }
+
     public HashSet<String> judge_first(Vector<String> strSet){
         HashSet<String> result = new HashSet<>();
         int count = 0;
@@ -425,63 +428,6 @@ public class Parser {
         }
     }
 
-    public void print_items(){
-        System.out.println("----------LR(0)项集族："+LRO_items.size()+"个----------");
-        for (int i=0;i<LRO_items.size();i++){
-            Status I = LRO_items.get(i);
-            System.out.println("###I("+i+")###");
-
-            for (Iterator it = I.set.iterator();it.hasNext();){
-                Project tmp_p = (Project)it.next();
-                Grammar tmp_g = G.get(tmp_p.pro_num);
-                System.out.print("  "+tmp_g.left+"->");
-                int count = 0;
-                for (int j=0;j<tmp_g.right.size();j++){
-                    if (count==tmp_p.dot_position)
-                        System.out.print(".");
-                    System.out.print(tmp_g.right.get(j));
-                    count++;
-                }
-                if (count==tmp_p.dot_position)
-                    System.out.print(".");
-                System.out.println();
-            }
-        }
-        System.out.println();
-    }
-
-    public void print_G(){
-        // 打印文法G
-        System.out.println("------G(是增广文法)---------");
-        for(int i=0;i<G.size();i++){
-            System.out.print(i+":"+G.get(i).left);
-            System.out.print("->");
-            for (int j=0;j<G.get(i).right.size();j++){
-                System.out.print(G.get(i).right.get(j));
-            }
-            System.out.println();
-        }
-    }
-
-    public void print_firstANDfollow(){
-        // 打印first&follow
-        System.out.println("-------first---------");
-        for (Object key:FIRST.keySet()){
-            System.out.println(key+":"+FIRST.get(key));
-        }
-        System.out.println("------follow---------");
-        for (Object key:FOLLOW.keySet()){
-            System.out.println(key+":"+FOLLOW.get(key));
-        }
-    }
-
-    public void printALLINFO(){
-        print_G(); // 打印文法G
-        print_firstANDfollow(); // 打印first和follow集
-        print_items(); // 打印LR(0)项
-        printAnalysisTable(); // 打印ACTION和GOTO分析表
-    }
-
     public String getNextSymbol(Project p){
         // 获得文法p的下一个字符，若没有则返回null
         String nextSymbol = null;
@@ -626,144 +572,6 @@ public class Parser {
         }
     }
 
-    public void printAnalysisTable(){
-        System.out.println("------------ACITON------------");
-        for (int i=0;i<_T.length;i++){
-            System.out.print("   "+_T[i]+"  ");
-        }
-        System.out.print("  $  ");
-        System.out.println();
-
-        for (int i=0;i<ACTION.map.size();i++){
-            System.out.print(i+":");
-            for (int j=0;j<_T.length;j++){
-                if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T[j])!=null){
-                    String s = (String) ACTION.map.get(i).get(_T[j])[0];
-                    int num= (int) ACTION.map.get(i).get(_T[j])[1];
-                    System.out.print("  "+s+num+"  ");
-                }
-                else {
-                    System.out.print("  --  ");
-                }
-            }
-            // 额外判断一列'$'
-            if (ACTION.map.get(i)!=null && ACTION.map.get(i).get("$")!=null){
-                String s = (String) ACTION.map.get(i).get("$")[0];
-                int num= (int) ACTION.map.get(i).get("$")[1];
-                System.out.print("  "+s+num+"  ");
-            }
-            else {
-                System.out.print("  --  ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("------------GOTO------------");
-        for (int i=1;i<_V.length;i++){
-            System.out.print("   "+_V[i]+"    ");
-        }
-        System.out.println();
-        for (int i=0;i<ACTION.map.size();i++){
-            System.out.print(i+":");
-            for (int j=1;j<_V.length;j++){
-                if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V[j])!=null){
-                    int num= GOTO.map.get(i).get(_V[j]);
-                    System.out.print("   "+num+"  ");
-                }
-                else {
-                    System.out.print("  --  ");
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    public void output_AnalysisTable(String filename){
-        try {
-            String filepath = "output/";
-            filepath = filepath+filename;
-            File writeName = new File(filepath);
-            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
-            try (FileWriter writer = new FileWriter(writeName);
-                 BufferedWriter out = new BufferedWriter(writer)
-            ) {
-                out.write("**ACTION**\r\n\r\n"); // \r\n即为换行
-                String out_line = "| |";
-                for (int i=0;i<_T.length;i++){
-                    out_line=out_line+_T[i]+"|";
-                }
-                out_line=out_line+"$|\r\n";
-                out.write(out_line);// 输出表格字段
-
-                out_line = "|";
-                for (int i=0;i<_T.length+2;i++){
-                    out_line=out_line+"-|";
-                }
-                out_line=out_line+"\r\n";
-                out.write(out_line);// 输出分隔符
-
-                for (int i=0;i<ACTION.map.size();i++){
-                    out_line="|"+i+"|";
-                    for (int j=0;j<_T.length;j++){
-                        if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T[j])!=null){
-                            String s = (String) ACTION.map.get(i).get(_T[j])[0];
-                            int num= (int) ACTION.map.get(i).get(_T[j])[1];
-                            out_line=out_line+s+num+"|";
-                        }
-                        else {
-                            out_line=out_line+"null|";
-                        }
-                    }
-                    // 额外判断一列'$'
-                    if (ACTION.map.get(i)!=null && ACTION.map.get(i).get("$")!=null){
-                        String s = (String) ACTION.map.get(i).get("$")[0];
-                        int num= (int) ACTION.map.get(i).get("$")[1];
-                        out_line=out_line+s+num+"|";
-                    }
-                    else {
-                        out_line=out_line+"null|";
-                    }
-                    out_line=out_line+"\r\n";
-                    out.write(out_line);// 输出表的内容(每行)
-                }
-
-                out.write("\r\n**GOTO**\r\n\r\n");
-                out_line = "| |";
-                for (int i=1;i<_V.length;i++){
-                    out_line=out_line+_V[i]+"|";
-                }
-                out_line=out_line+"\r\n";
-                out.write(out_line);// 输出表格字段
-
-                out_line = "|";
-                for (int i=0;i<_V.length;i++){
-                    out_line=out_line+"-|";
-                }
-                out_line=out_line+"\r\n";
-                out.write(out_line);// 分隔符
-
-                for (int i=0;i<ACTION.map.size();i++){
-                    out_line="|"+i+"|";
-                    for (int j=1;j<_V.length;j++){
-                        if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V[j])!=null){
-                            int num= GOTO.map.get(i).get(_V[j]);
-                            out_line=out_line+num+"|";
-                        }
-                        else {
-                            out_line=out_line+"null|";
-                        }
-                    }
-                    out_line=out_line+"\r\n";
-                    out.write(out_line);// 输出表的内容(每行)
-                }
-
-                out.flush(); // 把缓存区内容压入文件
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void gen(String code){
         // 产生代码
         codes.add(code);
@@ -802,28 +610,6 @@ public class Parser {
     public String getTemp(){
         temp_num++;
         return "t"+(temp_num-1);
-    }
-
-    public String getIdNameByToken(Token token){
-        // 根据标识符的token.val在idTable中获得变量名
-        String idname =null ;
-        if (token.type.equals("int") || token.type.equals("float")){
-            idname = idTable.get(Integer.parseInt(token.value));
-        }
-        return idname;
-    }
-
-    public void printGrammar(Grammar g){
-        if (g!=null){
-            System.out.print(g.left+"->");
-            for (int i=0;i<g.right.size();i++){
-                System.out.print(g.right.get(i));
-            }
-            System.out.println();
-        }
-        else {
-            System.out.println("Grammar is null.");
-        }
     }
 
     public void do_Analysis(Vector<Token> tokens){
@@ -1063,21 +849,6 @@ public class Parser {
                 }
             }
 
-            // 输出当前栈的状态
-
-/*            Stack<itemOfAnalysisStack> tmpstack = new Stack<>();
-            System.out.print(analysisStack.peek().status+"|");
-            while(!analysisStack.empty()){
-                itemOfAnalysisStack s1  = analysisStack.pop();
-                tmpstack.push(s1);
-            }
-            while(!tmpstack.empty()){
-                itemOfAnalysisStack s2 = tmpstack.pop();
-                analysisStack.push(s2);
-                System.out.print(s2.symbol+" ");
-            }
-            System.out.println();*/
-
         }// for
 
     }
@@ -1089,8 +860,177 @@ public class Parser {
         }
     }
 
+    public void output_Items(String filename){
+        try {
+            String filepath = "output/";
+            filepath = filepath+filename;
+            File writeName = new File(filepath);
+            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+            try (FileWriter writer = new FileWriter(writeName);
+                 BufferedWriter out = new BufferedWriter(writer)
+            ) {
+                String out_line;
+                out.write("## 语法分析结果-2\r\n\r\n");
+                out.write("### LR(0)项集族\r\n\r\n");
+                for (int i=0;i<LRO_items.size();i++){
+                    Status I = LRO_items.get(i);
+                    out.write("#### I("+i+")\r\n\r\n|left|right|\r\n|---|---|\r\n");
+
+                    for (Iterator it = I.set.iterator();it.hasNext();){
+                        Project tmp_p = (Project)it.next();
+                        Grammar tmp_g = G.get(tmp_p.pro_num);
+                        out_line="|"+tmp_g.left+"|";
+                        int count = 0;
+                        for (int j=0;j<tmp_g.right.size();j++){
+                            if (count==tmp_p.dot_position)
+                                out_line+=". ";
+                            out_line+=tmp_g.right.get(j)+" ";
+                            count++;
+                        }
+                        if (count==tmp_p.dot_position)
+                            out_line+=". ";
+                        out_line+="|\r\n";
+                        out.write(out_line);
+                    }
+                }
+                out.write("\r\n");
+                out.flush(); // 把缓存区内容压入文件
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void output_Grammar(String filename){
+        try {
+            String filepath = "output/";
+            filepath = filepath+filename;
+            File writeName = new File(filepath);
+            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+            try (FileWriter writer = new FileWriter(writeName);
+                 BufferedWriter out = new BufferedWriter(writer)
+            ) {
+                out.write("## 语法分析结果-1\r\n\r\n");
+                String out_line;
+                out.write("### 文法\r\n\r\n|No.|Grammar|\r\n|---|---|\r\n");
+                for (int i=0;i<G.size();i++){
+                    Grammar g = G.get(i);
+                    out_line="|"+i+"|"+g.left+"->";
+                    for (int j=0;j<g.right.size();j++){
+                        out_line=out_line+g.right.get(j)+" ";
+                    }
+                    out_line=out_line+"|\r\n";
+                    out.write(out_line);
+                }
+                out.write("### FIRST集\r\n\r\n|文法符号|FIRST集|\r\n|---|---|\r\n");
+                for (Object key:FIRST.keySet()){
+                    out_line = "|"+key+"|"+FIRST.get(key)+"|\r\n";
+                    out.write(out_line);
+                }
+                out.write("### FOLLOW集\r\n\r\n|文法符号|FOLLOW集|\r\n|---|---|\r\n");
+                for (Object key:FOLLOW.keySet()){
+                    out_line = "|"+key+"|"+FOLLOW.get(key)+"|\r\n";
+                    out.write(out_line);
+                }
+
+                out.flush(); // 把缓存区内容压入文件
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void output_AnalysisTable(String filename){
+        try {
+            String filepath = "output/";
+            filepath = filepath+filename;
+            File writeName = new File(filepath);
+            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+            try (FileWriter writer = new FileWriter(writeName);
+                 BufferedWriter out = new BufferedWriter(writer)
+            ) {
+                out.write("## 语法分析结果-3\r\n\r\n");
+                out.write("### ACTION\r\n\r\n"); // \r\n即为换行
+                String out_line = "| |";
+                for (int i=0;i<_T.length;i++){
+                    out_line=out_line+_T[i]+"|";
+                }
+                out_line=out_line+"$|\r\n";
+                out.write(out_line);// 输出表格字段
+
+                out_line = "|";
+                for (int i=0;i<_T.length+2;i++){
+                    out_line=out_line+"-|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 输出分隔符
+
+                for (int i=0;i<ACTION.map.size();i++){
+                    out_line="|"+i+"|";
+                    for (int j=0;j<_T.length;j++){
+                        if (ACTION.map.get(i)!=null && ACTION.map.get(i).get(_T[j])!=null){
+                            String s = (String) ACTION.map.get(i).get(_T[j])[0];
+                            int num= (int) ACTION.map.get(i).get(_T[j])[1];
+                            out_line=out_line+s+num+"|";
+                        }
+                        else {
+                            out_line=out_line+"null|";
+                        }
+                    }
+                    // 额外判断一列'$'
+                    if (ACTION.map.get(i)!=null && ACTION.map.get(i).get("$")!=null){
+                        String s = (String) ACTION.map.get(i).get("$")[0];
+                        int num= (int) ACTION.map.get(i).get("$")[1];
+                        out_line=out_line+s+num+"|";
+                    }
+                    else {
+                        out_line=out_line+"null|";
+                    }
+                    out_line=out_line+"\r\n";
+                    out.write(out_line);// 输出表的内容(每行)
+                }
+
+                out.write("\r\n### GOTO\r\n\r\n");
+                out_line = "| |";
+                for (int i=1;i<_V.length;i++){
+                    out_line=out_line+_V[i]+"|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 输出表格字段
+
+                out_line = "|";
+                for (int i=0;i<_V.length;i++){
+                    out_line=out_line+"-|";
+                }
+                out_line=out_line+"\r\n";
+                out.write(out_line);// 分隔符
+
+                for (int i=0;i<ACTION.map.size();i++){
+                    out_line="|"+i+"|";
+                    for (int j=1;j<_V.length;j++){
+                        if (GOTO.map.get(i)!=null && GOTO.map.get(i).get(_V[j])!=null){
+                            int num= GOTO.map.get(i).get(_V[j]);
+                            out_line=out_line+num+"|";
+                        }
+                        else {
+                            out_line=out_line+"null|";
+                        }
+                    }
+                    out_line=out_line+"\r\n";
+                    out.write(out_line);// 输出表的内容(每行)
+                }
+
+                out.flush(); // 把缓存区内容压入文件
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Parser(){
         // 变量初始化
+        Scanner scanner = new Scanner(System.in);
+        String input_str;
         G = new Vector<>();
         V = new Vector<>();
         T = new Vector<>();
@@ -1104,24 +1044,48 @@ public class Parser {
 
         // 分析部分
         Lexer lexer = new Lexer();  // 词法分析
-        keyword = lexer.keyword;
-        op = lexer.op;
-        idTable = lexer.idTable;
-        numTable = lexer.numTable;
+        boolean flag = true;
+        while (flag){
+            flag=false;
 
-        get_garmmer();              // 从文件读入文法符号
-        get_first();                // 获得FIRST集
-        get_follow();               // 获得FOLLOW集
-        get_items();                // 生成LR(0)项集族
-        get_AnalysisTable();        // 创建ACTION和GOTO分析表
-        do_Analysis(lexer.tokens);  // 语法分析
+            // 词法分析
+            lexer.start();
+            lexer.pre_op();
+            while(lexer.syn!=0){
+                lexer.Scanner();
+            }
+            lexer.output("LexerResult.md");
 
-        print_codes();
-        symbolTable.output();
-        //print_G();
-        //print_items();
-        output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
-        //System.out.println("finish");
+            keyword = lexer.keyword;
+            op = lexer.op;
+            idTable = lexer.idTable;
+            numTable = lexer.numTable;
+
+            // 语法分析
+            get_garmmer();              // 从文件读入文法符号
+            get_first();                // 获得FIRST集
+            get_follow();               // 获得FOLLOW集
+            get_items();                // 生成LR(0)项集族
+            get_AnalysisTable();        // 创建ACTION和GOTO分析表
+            do_Analysis(lexer.tokens);  // 语法分析
+            print_codes();
+
+            output_Grammar("grammar.md");
+            output_Items("items.md");
+            output_AnalysisTable("AnalysisTable.md");
+
+            System.out.println("-----------------------------------------");
+            System.out.println("    是否继续?");
+            System.out.println("    按1重新执行分析程序;");
+            System.out.println("    按其他任意键退出;");
+            scanner.reset();
+            input_str = scanner.next();
+            if (input_str.equals("1")){
+                flag=true;
+            }
+        }
+        System.exit(0);
+
     }
 }
 

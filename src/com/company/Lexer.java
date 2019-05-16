@@ -1,9 +1,10 @@
 package com.company;
 
-import java.util.Vector;
+import java.util.*;
 import java.io.*;
 
 public class Lexer {
+    // 变量定义部分
     public int syn,index;
     public String input_code;   // 输入代码
     public Vector<Token> tokens;    // 生成的token序列
@@ -11,24 +12,38 @@ public class Lexer {
                     op={"+","-","*","/","!=",">",">=","<","<=","=","==","(",")",";"};
     public Vector<String> idTable,numTable;
 
-    public void print_token(Vector<Token> token){
-        // 输出token
-        if (token!=null){
-            for (int i=0;i<token.size();i++){
-                System.out.println("<"+token.get(i).type+","+token.get(i).value+">");
+    // 函数实现部分
+    public void output(String filename){
+        try {
+            String filepath = "output/";
+            filepath = filepath+filename;
+            File writeName = new File(filepath);
+            writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+            try (FileWriter writer = new FileWriter(writeName);
+                 BufferedWriter out = new BufferedWriter(writer)
+            ) {
+                out.write("## 词法分析结果\r\n\r\n");
+                String out_line;
+                out.write("### Token串表\r\n\r\n|No.|Token|\r\n|---|---|\r\n");
+                for (int i=0;i<tokens.size();i++){
+                    out_line = "|"+i+"|<"+tokens.get(i).type+","+tokens.get(i).value+">|\r\n";
+                    out.write(out_line);
+                }
+                out.write("\r\n");
+                out.write("### 符号表(标识符)\r\n\r\n|No.|id|\r\n|---|---|\r\n");
+                for (int i=0;i<idTable.size();i++){
+                    out_line = "|"+i+"|"+idTable.get(i)+"|\r\n";
+                    out.write(out_line);
+                }
+                out.write("### 符号表(常数)\r\n\r\n|No.|num|\r\n|---|---|\r\n");
+                for (int i=0;i<numTable.size();i++){
+                    out_line = "|"+i+"|"+numTable.get(i)+"|\r\n";
+                    out.write(out_line);
+                }
+                out.flush(); // 把缓存区内容压入文件
             }
-        }
-    }
-
-    public void print_Symboltable(){
-        // 打印符号表idTable和numTable
-        System.out.println("--------标识符表--------");
-        for (int i=0;i<idTable.size();i++){
-            System.out.println("<"+i+","+idTable.get(i)+">");
-        }
-        System.out.println("--------常数表--------");
-        for (int i=0;i<numTable.size();i++){
-            System.out.println("<"+i+","+numTable.get(i)+">");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -276,7 +291,7 @@ public class Lexer {
             token.value=Integer.toString(syn-1);
             tokens.add(token);
         }
-        else if(ch=='\0')
+        else if(ch=='\0'||ch=='$')
         {
             syn=0;
             token.type="$";
@@ -292,21 +307,44 @@ public class Lexer {
         return token;
     }
 
-    public Lexer(){
+    public void start(){
         syn=-1;
         index=0;
         input_code = new String();
-        tokens = new Vector<Token>();
-        idTable = new Vector<String>();
-        numTable = new Vector<String>();
-        readfile();
-        pre_op();
-        //System.out.println(input_code);
-        while(syn!=0){
-            Scanner();
+        tokens = new Vector<>();
+        idTable = new Vector<>();
+        numTable = new Vector<>();
+
+        System.out.println("----------------编译小程序----------------");
+        System.out.println("    请选择源代码输入方式:");
+        System.out.println("    按1:读取/input目录下code.txt文件;");
+        System.out.println("    按2:用户通过命令行界面输入源程序;");
+        System.out.println("    按其他任意键退出;");
+        System.out.println("-----------------------------------------");
+        System.out.print(  "    请输入:");
+        Scanner sc = new Scanner(System.in);
+        String input_str = sc.next();
+        if (input_str.equals("2")){
+            System.out.println("    输入$和回车结束输入;");
+            sc.reset();
+            input_str="";
+            while (input_str.indexOf("$")==-1){
+                sc.reset();
+                input_str=sc.nextLine();
+                input_code+=input_str;
+            }
         }
-        //print_token(tokens);
-        //print_Symboltable();
+        else if (input_str.equals("1")){
+            readfile();
+        }
+        else {
+            System.out.println("退出程序");
+            System.exit(0);
+        }
+    }
+
+    public Lexer(){
+
     }
 }
 
