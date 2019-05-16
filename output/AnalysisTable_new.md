@@ -1,4 +1,5 @@
 **ACTION**
+
 | |id|int|float|if|else|while|num|;|>|<|==|=|+|-|*|/|(|)|~|$|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |0|r2|r2|r2|r2|null|r2|null|null|null|null|null|null|null|null|null|null|null|null|null|null|
@@ -73,7 +74,9 @@
 |69|r24|null|null|r24|null|r24|null|null|null|null|null|null|null|null|null|null|r24|null|null|null|
 |70|s8|null|null|s9|null|s10|null|null|null|null|null|null|null|null|null|null|null|null|null|null|
 |71|r24|null|null|r24|r9|r24|null|null|null|null|null|null|null|null|null|null|r24|null|null|r9|
+
 **GOTO**
+
 | |P|D|S|L|E|C|T|F|Q1|Q2|M|N|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|
 |0|1|null|null|null|null|null|null|null|2|null|null|null|

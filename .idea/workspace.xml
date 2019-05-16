@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9d65e741-65b3-4b4e-83fa-8da9f8ead5ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Parser.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -15,7 +14,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -29,10 +28,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-24">
+              <caret line="11" column="43" lean-forward="true" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="43" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10248">
-              <caret line="1123" column="39" lean-forward="true" selection-start-line="1123" selection-start-column="39" selection-end-line="1123" selection-end-column="39" />
+            <state relative-caret-position="560">
+              <caret line="1122" column="8" lean-forward="true" selection-start-line="1122" selection-start-column="8" selection-end-line="1122" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1793#2527#0" />
@@ -55,7 +66,6 @@
                 <element signature="e#17985#18800#0" />
                 <element signature="e#18806#23535#0" />
                 <element signature="e#23541#25424#0" />
-                <element signature="e#25430#28816#0" />
               </folding>
             </state>
           </provider>
@@ -131,7 +141,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="830" />
+    <option name="x" value="410" />
     <option name="y" value="37" />
     <option name="width" value="980" />
     <option name="height" value="1040" />
@@ -141,12 +151,44 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
+              <item name="untitled" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
+              <item name="untitled" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
+              <item name="untitled" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="company" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="untitled" type="b2602c69:ProjectViewProjectNode" />
+              <item name="untitled" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="company" type="462c0819:PsiDirectoryNode" />
+              <item name="Lexer.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557997736153" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557999173530" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Project" />
@@ -216,7 +258,7 @@
       <workItem from="1557919630394" duration="9931000" />
       <workItem from="1557930190022" duration="988000" />
       <workItem from="1557967664348" duration="9237000" />
-      <workItem from="1557979133747" duration="18480000" />
+      <workItem from="1557979133747" duration="19669000" />
     </task>
     <task id="LOCAL-00001" summary="完成Lexer文件读入和预处理。">
       <created>1556121809264</created>
@@ -393,11 +435,18 @@
       <option name="project" value="LOCAL" />
       <updated>1557992566411</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="针对符号表的生成进行修改">
+      <created>1557997774652</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1557997774652</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="140349000" />
+    <option name="totallyTimeSpent" value="141538000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -412,7 +461,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.30152145" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.30093834" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -510,7 +559,8 @@
     <MESSAGE value="完成语法分析。" />
     <MESSAGE value="1.将状态栈和符号栈合成一个分析栈&#10;2.正在改写语法分析，将分析和中间代码生成结合" />
     <MESSAGE value="1.完成中间代码生成。&#10;PS:能够完成实验给出的代码分析，不排除其他代码测试会出错的可能= =" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.完成中间代码生成。&#10;PS:能够完成实验给出的代码分析，不排除其他代码测试会出错的可能= =" />
+    <MESSAGE value="针对符号表的生成进行修改" />
+    <option name="LAST_COMMIT_MESSAGE" value="针对符号表的生成进行修改" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
@@ -585,9 +635,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
+          <folding>
+            <element signature="e#86#87#0" expanded="true" />
+            <element signature="e#130#131#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Lexer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
+        <state relative-caret-position="-24">
           <caret line="11" column="43" lean-forward="true" selection-start-line="11" selection-start-column="43" selection-end-line="11" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -597,8 +658,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10248">
-          <caret line="1123" column="39" lean-forward="true" selection-start-line="1123" selection-start-column="39" selection-end-line="1123" selection-end-column="39" />
+        <state relative-caret-position="560">
+          <caret line="1122" column="8" lean-forward="true" selection-start-line="1122" selection-start-column="8" selection-end-line="1122" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1793#2527#0" />
@@ -621,18 +682,6 @@
             <element signature="e#17985#18800#0" />
             <element signature="e#18806#23535#0" />
             <element signature="e#23541#25424#0" />
-            <element signature="e#25430#28816#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
-          <folding>
-            <element signature="e#86#87#0" expanded="true" />
-            <element signature="e#130#131#0" expanded="true" />
           </folding>
         </state>
       </provider>

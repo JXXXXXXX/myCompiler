@@ -687,7 +687,7 @@ public class Parser {
             try (FileWriter writer = new FileWriter(writeName);
                  BufferedWriter out = new BufferedWriter(writer)
             ) {
-                out.write("**ACTION**\r\n"); // \r\n即为换行
+                out.write("**ACTION**\r\n\r\n"); // \r\n即为换行
                 String out_line = "| |";
                 for (int i=0;i<_T.length;i++){
                     out_line=out_line+_T[i]+"|";
@@ -727,7 +727,7 @@ public class Parser {
                     out.write(out_line);// 输出表的内容(每行)
                 }
 
-                out.write("**GOTO**\r\n");
+                out.write("\r\n**GOTO**\r\n\r\n");
                 out_line = "| |";
                 for (int i=1;i<_V.length;i++){
                     out_line=out_line+_V[i]+"|";
@@ -1120,7 +1120,7 @@ public class Parser {
         symbolTable.output();
         //print_G();
         //print_items();
-        //output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
+        output_AnalysisTable("AnalysisTable_new.md"); // 输出ACTION和GOTO表
         //System.out.println("finish");
     }
 }
