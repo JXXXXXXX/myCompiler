@@ -302,6 +302,7 @@ public class Lexer {
         {
 
             System.out.println("error: no exist Lexer:"+input_code.charAt(index));
+            System.exit(0);
         }
         return token;
     }
@@ -331,6 +332,7 @@ public class Lexer {
                 sc.reset();
                 input_str=sc.nextLine();
                 input_code+=input_str;
+                input_code+="\n";
             }
         }
         else if (input_str.equals("1")){

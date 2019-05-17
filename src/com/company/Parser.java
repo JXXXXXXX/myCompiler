@@ -1054,7 +1054,6 @@ public class Parser {
             while(lexer.syn!=0){
                 lexer.Scanner();
             }
-            lexer.output("LexerResult.md");
 
             keyword = lexer.keyword;
             op = lexer.op;
@@ -1070,6 +1069,7 @@ public class Parser {
             do_Analysis(lexer.tokens);  // 语法分析
             print_codes();
 
+            lexer.output("LexerResult.md");
             output_Grammar("grammar.md");
             output_Items("items.md");
             output_AnalysisTable("AnalysisTable.md");
